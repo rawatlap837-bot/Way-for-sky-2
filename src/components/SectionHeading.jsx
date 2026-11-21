@@ -1,10 +1,5 @@
-import Eyebrow from "./Eyebrow.jsx";
-
-// Eyebrow + big heading + short paragraph.
-//   align = "center" (default) or "left"
-//   light = true for dark backgrounds
+// Big heading + short paragraph, without eyebrow text.
 function SectionHeading({
-  eyebrow,
   title,
   text,
   align = "center",
@@ -17,12 +12,6 @@ function SectionHeading({
     <div
       className={`max-w-3xl ${isCentered ? "mx-auto text-center" : ""} ${className}`}
     >
-      {eyebrow && (
-        <Eyebrow light={light} className={isCentered ? "justify-center" : ""}>
-          {eyebrow}
-        </Eyebrow>
-      )}
-
       <h2
         className={`mb-3 text-[clamp(1.65rem,8vw,2.6rem)] font-extrabold leading-[1.12] tracking-tight sm:text-[clamp(1.75rem,3.5vw,2.6rem)] sm:leading-tight ${light ? "text-white" : "text-navy"
           }`}

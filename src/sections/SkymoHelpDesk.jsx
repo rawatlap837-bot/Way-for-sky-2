@@ -1,5 +1,4 @@
 import Section from "../components/Section.jsx";
-import Eyebrow from "../components/Eyebrow.jsx";
 import Button from "../components/Button.jsx";
 import skymo from "../assets/images/skymo.jpg";
 import { links } from "../data/links.js";
@@ -39,7 +38,6 @@ function SkymoHelpDesk() {
 
         {/* Text */}
         <div className="text-center md:text-left">
-          <Eyebrow className="mb-3">Need help? Skymo is here.</Eyebrow>
           <h2 className="mb-3 text-[clamp(1.8rem,8vw,2.6rem)] font-extrabold leading-[1.08] tracking-tight text-navy">
             Hi, I’m Skymo.
           </h2>

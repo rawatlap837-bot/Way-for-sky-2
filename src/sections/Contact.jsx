@@ -10,7 +10,7 @@ const iconClass = "mb-3 grid h-11 w-11 place-items-center rounded-full bg-[#edf5
 // Three contact cards + a "request a call" box (id="contact").
 function Contact() {
   return (
-    <Section id="contact" className="bg-soft">
+    <Section id="contact" className="border-y border-[#e3ebf1] bg-white">
       <SectionHeading
         className="mb-10"
         eyebrow="Official WayForSky Channels"

@@ -9,19 +9,27 @@ const variants = {
   light: "bg-white text-navy hover:bg-ice",
 };
 
-function Button({ href, variant = "primary", className = "", children, ...props }) {
+function Button({ href, variant = "primary", className = "", children, onClick, ...props }) {
   const classes = `inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-[18px] font-bold capitalize transition duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${variants[variant]} ${className}`;
 
   if (href) {
+    const handleRegisterClick = (event) => {
+      if (href === "#register") {
+        event.preventDefault();
+        window.dispatchEvent(new Event("open-scholarship-popup"));
+      }
+      onClick?.(event);
+    };
+
     return (
-      <a href={href} className={classes} {...props}>
+      <a href={href} className={classes} onClick={handleRegisterClick} {...props}>
         {children}
       </a>
     );
   }
 
   return (
-    <button className={classes} {...props}>
+    <button className={classes} onClick={onClick} {...props}>
       {children}
     </button>
   );

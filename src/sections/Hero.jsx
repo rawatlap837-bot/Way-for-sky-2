@@ -1,5 +1,4 @@
 import Container from "../components/Container.jsx";
-import Eyebrow from "../components/Eyebrow.jsx";
 import Button from "../components/Button.jsx";
 import classroomPhoto from "../assets/images/hero-classroom.jpg";
 import skymo from "../assets/images/skymo.jpg";
@@ -11,8 +10,6 @@ function Hero() {
       <Container className="grid items-center gap-5 md:grid-cols-[0.88fr_1.12fr] lg:gap-12">
         {/* ---------- Left side: text ---------- */}
         <div>
-          <Eyebrow>WayForSky Aviation Academy</Eyebrow>
-
           <h1 className="mb-3 text-[clamp(2.5rem,9vw,4rem)] font-extrabold leading-[1.05] tracking-tight text-navy sm:mb-5">
             Start your pilot journey in a{" "}
             <span className="text-brand">real learning environment.</span>

@@ -16,7 +16,7 @@ const reviews = [
 
 function GoogleReviews() {
   return (
-    <Section id="google-review-highlights" className="bg-white">
+    <Section id="google-review-highlights" className="border-y border-[#ddeaf3] bg-[#edf5fb]">
       <SectionHeading
         className="mb-10"
         eyebrow="Parent & Student Feedback"

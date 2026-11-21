@@ -5,12 +5,13 @@ import classroom from "../assets/images/academy-classroom.jpg";
 // Big classroom photo with a caption (id="campus").
 function Campus() {
   return (
-    <Section id="campus" className="bg-white">
+    <Section id="campus" className="border-y border-[#173956] bg-[#071D36] text-white">
       <SectionHeading
         className="mb-10"
         eyebrow="Inside the Academy"
         title="A learning space built around aviation."
         text="Give students and parents a closer look at the classroom environment, learning tools and the way lessons are delivered."
+        light
       />
 
       <div className="relative h-[290px] overflow-hidden rounded-3xl shadow-card sm:h-[400px] lg:h-[480px]">

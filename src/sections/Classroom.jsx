@@ -1,6 +1,5 @@
 import { Check } from "lucide-react";
 import Section from "../components/Section.jsx";
-import Eyebrow from "../components/Eyebrow.jsx";
 import studentsPhoto from "../assets/images/students-learning.jpg";
 
 // The three concise learning benefits.
@@ -24,7 +23,6 @@ function Classroom() {
         </div>
 
         <div>
-          <Eyebrow>The Learning Experience</Eyebrow>
           <h2 className="mb-3 max-w-lg text-[clamp(1.75rem,3.5vw,2.6rem)] font-extrabold leading-tight tracking-tight text-navy">
             Focused learning. Experienced guidance. Real preparation.
           </h2>

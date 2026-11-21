@@ -43,7 +43,7 @@ function AudioFeedback() {
   );
 
   return (
-    <Section id="audio-feedback" className="bg-white">
+    <Section id="audio-feedback" className="border-y border-[#ddeaf3] bg-[#edf5fb]">
       <SectionHeading
         className="mb-10"
         eyebrow="Listen to Real Experiences"

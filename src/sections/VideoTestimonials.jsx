@@ -43,7 +43,7 @@ function VideoTestimonials() {
   const [activeVideo, setActiveVideo] = useState(null);
 
   return (
-    <Section id="testimonial-shorts" className="bg-soft">
+    <Section id="testimonial-shorts" className="border-y border-[#e3ebf1] bg-white">
       <SectionHeading
         className="mb-8 sm:mb-10"
         eyebrow="Real Voices · Short Stories"
