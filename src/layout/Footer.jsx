@@ -9,7 +9,6 @@ const footerLinks = [
   { label: "FAQs", href: "#faq" },
   { label: "Register", href: "#register" },
   { label: "Instagram", href: links.instagram, external: true },
-  { label: "Audio Feedback", href: "#audio-feedback" },
   { label: "Contact & Reviews", href: "#contact" },
 ];
 

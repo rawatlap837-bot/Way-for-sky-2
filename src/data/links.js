@@ -9,5 +9,6 @@ export const links = {
   whatsappScholarship:
     "https://wa.me/?text=Hello%20WayForSky%2C%20I%20would%20like%20scholarship%20information.",
   instagram: "https://www.instagram.com/wayforskyofficial/",
+  youtube: "https://youtube.com/@wayforskyacademy",
   googleReviews: "https://www.google.com/search?q=WayForSky+reviews",
 };

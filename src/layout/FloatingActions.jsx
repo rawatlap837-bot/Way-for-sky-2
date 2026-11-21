@@ -14,7 +14,7 @@ function FloatingActions() {
   return (
     <div
       aria-label="Quick contact links"
-      className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-2xl border border-line bg-white/95 p-2 shadow-lg backdrop-blur md:bottom-6 md:left-auto md:right-4 md:translate-x-0 md:flex-col md:items-stretch md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none"
+      className="fixed bottom-[max(0.5rem,env(safe-area-inset-bottom))] left-3 right-3 z-50 grid grid-cols-4 items-center gap-1.5 rounded-[18px] border border-white/80 bg-white/95 p-1.5 shadow-[0_10px_35px_rgba(7,29,54,0.22)] backdrop-blur-md md:bottom-6 md:left-auto md:right-4 md:flex md:w-auto md:flex-col md:items-stretch md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none"
     >
       {actions.map((action) => {
         const Icon = action.icon;
@@ -24,11 +24,12 @@ function FloatingActions() {
             key={action.label}
             href={action.href}
             aria-label={action.label}
-            className={`flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full p-3 text-xs font-extrabold text-white shadow-lg transition hover:-translate-y-0.5 md:min-w-[140px] md:justify-start md:px-4 md:py-2.5 ${action.colour}`}
+            className={`flex h-14 w-full flex-col items-center justify-center gap-0.5 rounded-xl p-1 text-white shadow-md transition active:scale-[0.96] md:h-auto md:min-w-[140px] md:flex-row md:gap-2 md:rounded-full md:px-4 md:py-2.5 ${action.colour}`}
             {...(action.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           >
-            <Icon size={18} />
-            <span className="hidden md:inline">{action.label}</span>
+            <Icon size={16} />
+            <span className="text-[8px] font-extrabold leading-none md:hidden">{action.label}</span>
+            <span className="hidden text-xs font-extrabold md:inline">{action.label}</span>
           </a>
         );
       })}

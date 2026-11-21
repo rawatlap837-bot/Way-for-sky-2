@@ -15,7 +15,6 @@ import MediaHub from "./sections/MediaHub.jsx";
 import WhyWayForSky from "./sections/WhyWayForSky.jsx";
 import Roadmap from "./sections/Roadmap.jsx";
 import VideoTestimonials from "./sections/VideoTestimonials.jsx";
-import AudioFeedback from "./sections/AudioFeedback.jsx";
 import Contact from "./sections/Contact.jsx";
 import GoogleReviews from "./sections/GoogleReviews.jsx";
 import Faq from "./sections/Faq.jsx";
@@ -29,7 +28,7 @@ function App() {
       <Topbar />
       <Header />
 
-      <main>
+      <main className="pb-20 md:pb-0">
         <Hero />
         <TrustStrip />
         <SkymoHelpDesk />
@@ -42,7 +41,6 @@ function App() {
         <WhyWayForSky />
         <Roadmap />
         <VideoTestimonials />
-        <AudioFeedback />
         <Contact />
         <GoogleReviews />
         <Faq />

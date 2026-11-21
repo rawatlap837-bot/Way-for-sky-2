@@ -10,7 +10,7 @@ const variants = {
 };
 
 function Button({ href, variant = "primary", className = "", children, ...props }) {
-  const classes = `inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-bold capitalize transition duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${variants[variant]} ${className}`;
+  const classes = `inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-[18px] font-bold capitalize transition duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${variants[variant]} ${className}`;
 
   if (href) {
     return (

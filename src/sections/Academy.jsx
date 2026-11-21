@@ -18,34 +18,34 @@ const academySteps = [
 
 function Academy() {
   return (
-    <Section id="academy" className="bg-[#f7fafc]">
+    <Section id="academy" className="bg-gradient-to-b from-[#f7fafc] to-white">
       <SectionHeading
-        className="mb-10"
-        eyebrow="More than a ground-class programme"
-        title="One academy. A guided pathway towards your pilot ambition."
-        text="WayForSky brings aviation learning, counselling and pathway guidance together. Students and parents can understand each stage before making important decisions."
+        className="mb-6 sm:mb-10"
+        eyebrow="More Than a Ground-Class Programme"
+        title="One Academy. A Guided Pathway Towards Your Pilot Ambition."
+        text="WayForSky brings aviation learning, counselling and pathway guidance together. Understand each stage before making important decisions."
       />
 
-      <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-5">
         {academySteps.map((step, index) => {
           const Icon = step.icon;
 
           return (
-            <article key={step.title} className="relative rounded-2xl border border-line bg-white p-5">
-              <span className="absolute right-4 top-3.5 text-[11px] font-extrabold text-[#9aabba]">
+            <article key={step.title} className="relative min-h-[170px] rounded-2xl border border-[#dbe7ef] bg-white p-3.5 shadow-[0_8px_24px_rgba(7,29,54,0.06)] sm:min-h-[210px] sm:p-5">
+              <span className="absolute right-3 top-3 text-[9px] font-extrabold tracking-wider text-[#9aabba] sm:right-4 sm:top-3.5 sm:text-[11px]">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <span className="mb-4 grid h-11 w-11 place-items-center rounded-xl bg-ice text-brand">
-                <Icon size={22} />
+              <span className="mb-3 grid h-9 w-9 place-items-center rounded-xl border border-[#d8e8f2] bg-ice text-brand sm:mb-4 sm:h-11 sm:w-11">
+                <Icon size={19} strokeWidth={1.8} />
               </span>
-              <h3 className="mb-2 text-[15px] font-bold leading-snug text-navy">{step.title}</h3>
-              <p className="text-[13px] text-muted">{step.text}</p>
+              <h3 className="mb-1.5 pr-3 text-[12px] font-extrabold leading-[1.25] text-navy sm:mb-2 sm:text-[15px] sm:leading-snug">{step.title}</h3>
+              <p className="text-[9.5px] leading-[1.45] text-muted sm:text-[13px] sm:leading-relaxed">{step.text}</p>
             </article>
           );
         })}
       </div>
 
-      <div className="mt-5 border-l-[3px] border-gold bg-white p-5 text-[13px] text-[#526579]">
+      <div className="mt-4 rounded-2xl border border-[#dbe7ef] border-l-[3px] border-l-gold bg-white p-4 text-[11px] leading-[1.55] text-[#526579] shadow-[0_8px_24px_rgba(7,29,54,0.05)] sm:mt-5 sm:p-5 sm:text-[13px]">
         <strong>Our commitment:</strong> We take the pathway seriously. We explain the
         process, expectations and decisions clearly. A pilot career depends on individual
         eligibility, performance, medical fitness, training progress and regulatory

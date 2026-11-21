@@ -3,11 +3,11 @@ import Section from "../components/Section.jsx";
 import Eyebrow from "../components/Eyebrow.jsx";
 import studentsPhoto from "../assets/images/students-learning.jpg";
 
-// The three tick points.
+// The three concise learning benefits.
 const classroomPoints = [
-  "Instructor-led classes and subject-focused learning",
-  "Digital learning support and structured study resources",
-  "Guidance on examinations and the wider pilot pathway",
+  "Instructor-Led Classes And Subject-Focused Learning",
+  "Digital Learning Support And Structured Study Resources",
+  "Guidance On Examinations And The Wider Pilot Pathway",
 ];
 
 function Classroom() {
@@ -29,18 +29,23 @@ function Classroom() {
             Focused learning. Experienced guidance. Real preparation.
           </h2>
           <p className="text-muted">
-            Ground training is where aviation knowledge takes shape. Our learning approach
-            is designed to help students understand concepts, build discipline and prepare
-            systematically for their DGCA examinations.
+            Ground training is where aviation knowledge takes shape. Our learning
+            approach is designed to help students understand concepts, build
+            discipline and prepare systematically for their DGCA examinations.
           </p>
 
-          <ul className="mt-6 grid gap-3.5">
+          <ul className="mt-5 grid gap-2.5 sm:mt-6 sm:gap-3.5">
             {classroomPoints.map((point) => (
-              <li key={point} className="flex items-start gap-3 text-sm text-[#33485d]">
-                <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand text-white">
-                  <Check size={13} strokeWidth={3} />
+              <li
+                key={point}
+                className="flex items-start gap-3 rounded-xl border border-[#dfe8ef] bg-white p-3 shadow-[0_6px_20px_rgba(7,29,54,0.05)] sm:p-4"
+              >
+                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand text-white sm:h-7 sm:w-7">
+                  <Check size={14} strokeWidth={3} />
                 </span>
-                <span>{point}</span>
+                <span className="text-[13px] leading-[1.45] text-[#33485d] sm:text-[15px]">
+                  {point}
+                </span>
               </li>
             ))}
           </ul>

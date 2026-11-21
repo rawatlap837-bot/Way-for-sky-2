@@ -5,7 +5,7 @@ import Container from "./Container.jsx";
 //   className -> background colour, for example "bg-soft"
 function Section({ id, className = "", children }) {
   return (
-    <section id={id} className={`scroll-mt-20 py-16 sm:py-20 ${className}`}>
+    <section id={id} className={`scroll-mt-20 py-12 sm:py-16 lg:py-20 ${className}`}>
       <Container>{children}</Container>
     </section>
   );

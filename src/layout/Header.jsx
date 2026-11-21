@@ -23,13 +23,13 @@ function Header() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-white/95 backdrop-blur">
-      <Container className="flex h-[72px] items-center justify-between gap-6">
+      <Container className="flex h-16 items-center justify-between gap-3 sm:h-[72px]">
         {/* Logo */}
-        <a href="#home" aria-label="WayForSky home">
+        <a href="#home" aria-label="WayForSky home" className="shrink-0">
           <img
             src={logo}
             alt="WayForSky – Global Aviation Pathway"
-            className="h-11 w-auto sm:h-[54px]"
+            className="h-9 w-auto sm:h-[54px]"
           />
         </a>
 
@@ -46,9 +46,10 @@ function Header() {
         </nav>
 
         {/* Apply button + mobile menu button */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Button href="#register" className="whitespace-nowrap px-3 py-2 text-xs sm:px-5 sm:py-2.5 sm:text-sm">
-            Apply Now
+            <span className="sm:hidden">Apply</span>
+            <span className="hidden sm:inline">Apply Now</span>
           </Button>
 
           <button
@@ -56,9 +57,9 @@ function Header() {
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
-            className="rounded-lg border border-line p-2 text-navy xl:hidden"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-line text-navy xl:hidden"
           >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            {menuOpen ? <X size={21} /> : <Menu size={21} />}
           </button>
         </div>
       </Container>

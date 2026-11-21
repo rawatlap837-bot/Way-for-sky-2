@@ -24,9 +24,8 @@ function SectionHeading({
       )}
 
       <h2
-        className={`mb-3 text-[clamp(1.75rem,3.5vw,2.6rem)] font-extrabold leading-tight tracking-tight ${
-          light ? "text-white" : "text-navy"
-        }`}
+        className={`mb-3 text-[clamp(1.65rem,8vw,2.6rem)] font-extrabold leading-[1.12] tracking-tight sm:text-[clamp(1.75rem,3.5vw,2.6rem)] sm:leading-tight ${light ? "text-white" : "text-navy"
+          }`}
       >
         {title}
       </h2>

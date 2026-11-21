@@ -5,7 +5,7 @@ function Eyebrow({ children, light = false, className = "" }) {
 
   return (
     <div
-      className={`mb-4 inline-flex items-center gap-2 text-xs font-extrabold tracking-wider ${colour} ${className}`}
+      className={`mb-4 inline-flex items-center gap-2 text-xs font-extrabold capitalize tracking-wider ${colour} ${className}`}
     >
       <span className="h-0.5 w-7 bg-gold" />
       {children}
