@@ -4,9 +4,17 @@ import SectionHeading from "../components/SectionHeading.jsx";
 
 function Register() {
   const [isOpen, setIsOpen] = useState(false);
-  const [formData, setFormData] = useState({ fullName: "", mobile: "", email: "" });
+  const [formData, setFormData] = useState({
+    fullName: "",
+    mobile: "",
+    email: "",
+    city: "",
+    education: "",
+    counsellingTime: "",
+  });
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const openPopup = () => {
@@ -51,13 +59,54 @@ function Register() {
       return;
     }
 
+    if (new Date(formData.counsellingTime).getTime() <= Date.now()) {
+      setErrorMessage("Please choose a future date and time for your counselling call.");
+      setIsSubmitted(false);
+      return;
+    }
+
+    const endpoint = import.meta.env.VITE_GOOGLE_SHEETS_WEB_APP_URL;
+    if (!endpoint || endpoint.includes("YOUR_DEPLOYMENT_ID")) {
+      setErrorMessage("Google Sheets is not configured yet. Please add the deployed Apps Script web app URL.");
+      setIsSubmitted(false);
+      return;
+    }
+
     setErrorMessage("");
-    setIsSubmitted(true);
+    setIsSubmitting(true);
+
+    const payload = new URLSearchParams({
+      fullName: formData.fullName.trim(),
+      mobile: formData.mobile,
+      email: formData.email.trim(),
+      city: formData.city.trim(),
+      education: formData.education.trim(),
+      counsellingTime: formData.counsellingTime,
+    });
+
+    fetch(endpoint, {
+      method: "POST",
+      body: payload,
+      mode: "no-cors",
+    })
+      .then(() => {
+        setIsSubmitted(true);
+        setFormData({ fullName: "", mobile: "", email: "", city: "", education: "", counsellingTime: "" });
+      })
+      .catch(() => {
+        setErrorMessage("Your application could not be submitted. Please try again.");
+        setIsSubmitted(false);
+      })
+      .finally(() => setIsSubmitting(false));
   }
 
   function closePopup() {
     setIsOpen(false);
   }
+
+  const minimumCounsellingTime = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 16);
 
   return (
     <>
@@ -90,7 +139,7 @@ function Register() {
             if (event.target === event.currentTarget) closePopup();
           }}
         >
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 text-ink shadow-2xl sm:p-7">
+          <div className="relative max-h-[calc(100vh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 text-ink shadow-2xl sm:p-7">
             <button
               type="button"
               aria-label="Close application form"
@@ -145,7 +194,7 @@ function Register() {
                 />
               </div>
 
-              <div className="mb-5">
+              <div className="mb-4">
                 <label htmlFor="popup-email" className="mb-1.5 block text-xs font-bold text-[#34495d]">
                   Email address *
                 </label>
@@ -157,6 +206,54 @@ function Register() {
                   onChange={handleChange}
                   placeholder="Enter your email address"
                   required
+                  className="w-full rounded-lg border border-[#ccd8e2] bg-white px-3 py-3 text-sm text-ink outline-none transition focus:border-brand focus:ring-4 focus:ring-brand/15"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="popup-city" className="mb-1.5 block text-xs font-bold text-[#34495d]">
+                  City *
+                </label>
+                <input
+                  id="popup-city"
+                  name="city"
+                  type="text"
+                  value={formData.city}
+                  onChange={handleChange}
+                  placeholder="Your city"
+                  required
+                  className="w-full rounded-lg border border-[#ccd8e2] bg-white px-3 py-3 text-sm text-ink outline-none transition focus:border-brand focus:ring-4 focus:ring-brand/15"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="popup-education" className="mb-1.5 block text-xs font-bold text-[#34495d]">
+                  Current Education *
+                </label>
+                <input
+                  id="popup-education"
+                  name="education"
+                  type="text"
+                  value={formData.education}
+                  onChange={handleChange}
+                  placeholder="Your current education"
+                  required
+                  className="w-full rounded-lg border border-[#ccd8e2] bg-white px-3 py-3 text-sm text-ink outline-none transition focus:border-brand focus:ring-4 focus:ring-brand/15"
+                />
+              </div>
+
+              <div className="mb-5">
+                <label htmlFor="popup-counsellingTime" className="mb-1.5 block text-xs font-bold text-[#34495d]">
+                  Preferred Counselling Date & Time *
+                </label>
+                <input
+                  id="popup-counsellingTime"
+                  name="counsellingTime"
+                  type="datetime-local"
+                  value={formData.counsellingTime}
+                  onChange={handleChange}
+                  required
+                  min={minimumCounsellingTime}
                   className="w-full rounded-lg border border-[#ccd8e2] bg-white px-3 py-3 text-sm text-ink outline-none transition focus:border-brand focus:ring-4 focus:ring-brand/15"
                 />
               </div>
@@ -174,9 +271,10 @@ function Register() {
 
               <button
                 type="submit"
-                className="w-full rounded-lg bg-navy px-5 py-3 text-sm font-bold text-white transition hover:bg-[#123b63]"
+                disabled={isSubmitting}
+                className="w-full rounded-lg bg-navy px-5 py-3 text-sm font-bold text-white transition hover:bg-[#123b63] disabled:cursor-not-allowed disabled:opacity-70"
               >
-                Submit application
+                {isSubmitting ? "Submitting..." : "Submit application"}
               </button>
             </form>
           </div>

@@ -3,15 +3,16 @@ import SectionHeading from "../components/SectionHeading.jsx";
 import Carousel from "../components/Carousel.jsx";
 import { links } from "../data/links.js";
 
-// The review cards. Replace each one with a genuine review
-// copied from the official WayForSky Google Business Profile.
+// Genuine Google review graphics from the public/reviews folder.
 const reviews = [
-  { text: "Paste genuine Google review excerpt here.", name: "Reviewer name from Google", date: "Google review · Date" },
-  { text: "Paste genuine Google review excerpt here.", name: "Reviewer name from Google", date: "Google review · Date" },
-  { text: "Paste genuine Google review excerpt here.", name: "Reviewer name from Google", date: "Google review · Date" },
-  { text: "Paste genuine Google review excerpt here.", name: "Reviewer name from Google", date: "Google review · Date" },
-  { text: "Paste genuine Google review excerpt here.", name: "Reviewer name from Google", date: "Google review · Date" },
-  { text: "Paste genuine Google review excerpt here.", name: "Reviewer name from Google", date: "Google review · Date" },
+  "/reviews/221d51f5-7c54-41aa-a2a3-1d02a30ec073.png",
+  "/reviews/85367112-e2cf-41a6-a205-0fe26e6555bc.png",
+  "/reviews/8b13bc50-307c-4161-a039-51b6716e98a9.png",
+  "/reviews/99f9b36d-cf65-4757-b52e-92d9738385ee.png",
+  "/reviews/b0f5bb8d-801b-4055-a8c9-dae48b486e8a.png",
+  "/reviews/b27b0789-d71e-49bb-87f6-4a464038e16b.png",
+  "/reviews/c49cc678-7daf-4a96-bb4c-63bebf490a17.png",
+  "/reviews/d32e0679-faea-47bc-929c-79e04dd57dca.png",
 ];
 
 function GoogleReviews() {
@@ -21,22 +22,21 @@ function GoogleReviews() {
         className="mb-10"
         eyebrow="Parent & Student Feedback"
         title="What people say about WayForSky."
-        text="Swipe through the review cards. Each card should contain a genuine review copied from the official WayForSky Google Business Profile."
+        text="Swipe through genuine Google review testimonials shared by WayForSky students and parents."
       />
 
-      <Carousel label="Google review cards">
-        {reviews.map((review, index) => (
+      <Carousel label="Google review testimonials">
+        {reviews.map((image, index) => (
           <article
-            key={index}
-            className="min-h-[220px] w-72 shrink-0 snap-start rounded-2xl border border-line bg-white p-5 shadow-[0_8px_24px_rgba(7,29,54,0.05)] sm:w-80"
+            key={image}
+            className="w-[260px] max-w-[82vw] shrink-0 snap-start overflow-hidden rounded-2xl border border-line bg-white shadow-[0_8px_24px_rgba(7,29,54,0.10)] sm:w-[320px]"
           >
-            <div className="text-[13px] font-extrabold text-[#5f6b75]">
-              <b className="mr-1 text-[19px] text-[#4285f4]">G</b> Google
-            </div>
-            <div className="my-2.5 text-[19px] text-[#f5b400]">★★★★★</div>
-            <p className="min-h-[54px] text-[13px] text-ink">{review.text}</p>
-            <strong className="mt-3 block text-xs text-navy">{review.name}</strong>
-            <small className="text-[11px] text-muted">{review.date}</small>
+            <img
+              src={image}
+              alt={`WayForSky Google review testimonial ${index + 1}`}
+              loading="lazy"
+              className="h-auto w-full object-cover"
+            />
           </article>
         ))}
       </Carousel>

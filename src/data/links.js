@@ -5,9 +5,9 @@
 // https://wa.me/91XXXXXXXXXX?text=Hello%20WayForSky
 
 export const links = {
-  whatsapp: "https://wa.me/?text=Hello%20WayForSky%2C%20I%20need%20help.",
+  whatsapp: "https://wa.me/919739525223?text=Hello%20WayForSky%2C%20I%20need%20help.",
   whatsappScholarship:
-    "https://wa.me/?text=Hello%20WayForSky%2C%20I%20would%20like%20scholarship%20information.",
+    "https://wa.me/919739525223?text=Hello%20WayForSky%2C%20I%20would%20like%20scholarship%20information.",
   instagram: "https://www.instagram.com/wayforskyofficial/",
   youtube: "https://youtube.com/@wayforskyacademy",
   googleReviews: "https://www.google.com/search?q=WayForSky+reviews",

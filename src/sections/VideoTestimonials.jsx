@@ -6,7 +6,6 @@ import Carousel from "../components/Carousel.jsx";
 
 // Public WayForSky YouTube Shorts.
 const videos = [
-  { type: "Student Story", title: "Shruthi’s Pilot Journey", id: "aB6yQ9Ddhpo" },
   { type: "Captain Story", title: "Meet Captain Niyati", id: "vAzumSD2GhE" },
   { type: "Student Story", title: "Sindhu’s Pilot Journey", id: "jdkrE3Llbu0" },
   { type: "Scholarship Story", title: "Nishanth Wins DGCA Classes", id: "FM-f5DskY38" },
@@ -19,12 +18,6 @@ const videos = [
   { type: "Student Story", title: "Hajira Speaks About Her Journey", id: "n68JOgF2DXU" },
   { type: "Student Story", title: "Farida’s Journey to the Cockpit", id: "XCb_bgH2Q6g" },
   { type: "Student Story", title: "Junaid on Choosing WayForSky", id: "dUn17fLj9YU" },
-  { type: "Student Story", title: "Benitha’s Honest Review", id: "JKV2JG2TESg" },
-  { type: "Student Story", title: "Why Rayan Chose WayForSky", id: "bOVebXx5Xpk" },
-  { type: "Student Story", title: "Arshiya’s Honest Story", id: "AJq6mUPIx-8" },
-  { type: "Student Story", title: "Junaid’s One-Minute Review", id: "N9vmVesK5sc" },
-  { type: "Student Story", title: "Kavya’s WayForSky Experience", id: "gR8KjqkhEbs" },
-  { type: "Student Story", title: "Adil Shares Honest Feedback", id: "vDSXvmXoJbg" },
   { type: "Scholarship Story", title: "Shiny Wins Free DGCA Classes", id: "6cxCaWU7GHc" },
   { type: "Scholarship Story", title: "Hannah Wins a Scholarship", id: "GIEYHhcJxxk" },
   { type: "Scholarship Story", title: "Surya’s Pilot Dream", id: "1a64-TgglaE" },
