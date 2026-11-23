@@ -1,7 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Section from "../components/Section.jsx";
 import SectionHeading from "../components/SectionHeading.jsx";
-import Carousel from "../components/Carousel.jsx";
+
+// ---------- Auto-scroll settings ----------
+const autoScrollSpeed = 45; // how fast it glides (pixels per second)
+const autoScrollDirection = 1; // 1 = next videos come in from the right, -1 = from the left
+const resumeAfter = 2000; // starts gliding again this long (milliseconds) after the user stops
 
 // Public WayForSky YouTube Shorts.
 const videoFeedback = [
@@ -13,6 +18,27 @@ const videoFeedback = [
   { title: "Kavya’s WayForSky Experience", id: "gR8KjqkhEbs" },
   { title: "Adil Shares Honest Feedback", id: "vDSXvmXoJbg" },
 ];
+
+// Remove any video that is listed twice
+const uniqueVideoFeedback = videoFeedback.filter(
+  (item, index, items) => items.findIndex((entry) => entry.id === item.id) === index
+);
+
+// The list is shown three times in a row, so when one copy ends the next copy
+// looks exactly the same and the slider can jump back without anyone noticing.
+const loopedVideos = [...uniqueVideoFeedback, ...uniqueVideoFeedback, ...uniqueVideoFeedback];
+
+// Width of one full copy of the list (used for the endless loop)
+function getLoopWidth(scroller) {
+  const cards = scroller.children;
+  return cards[uniqueVideoFeedback.length].offsetLeft - cards[0].offsetLeft;
+}
+
+// Width of one card plus the gap (used by the arrow buttons)
+function getStep(scroller) {
+  const cards = scroller.children;
+  return cards[1].offsetLeft - cards[0].offsetLeft;
+}
 
 /* ---------- Load the YouTube player script only once ---------- */
 let youTubeApiPromise;
@@ -66,7 +92,9 @@ function SoundIcon({ muted, className = "" }) {
 }
 
 /* ---------- The player: tap anywhere to pause or play ---------- */
-function VideoPlayer({ id, title }) {
+// onBusyChange tells the slider when a video is loading or playing,
+// so the slider does not move away from a video that is being watched.
+function VideoPlayer({ id, title, onBusyChange }) {
   const wrapRef = useRef(null);
   const hostRef = useRef(null);
   const playerRef = useRef(null);
@@ -74,6 +102,16 @@ function VideoPlayer({ id, title }) {
   const [status, setStatus] = useState("loading"); // loading | playing | paused
   const [muted, setMuted] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  // Tell the slider whether this video is busy (loading or playing)
+  useEffect(() => {
+    onBusyChange(status !== "paused");
+  }, [status, onBusyChange]);
+
+  // When this player is removed, the slider is free to move again
+  useEffect(() => {
+    return () => onBusyChange(false);
+  }, [onBusyChange]);
 
   // Create the YouTube player
   useEffect(() => {
@@ -247,12 +285,14 @@ function VideoPlayer({ id, title }) {
 }
 
 /* ---------- One card ---------- */
-function VideoCard({ item, index, isPlaying, onPlay }) {
+// cardKey is different for every card, even for the repeated copies,
+// so only the card you tapped turns into a player.
+function VideoCard({ item, number, cardKey, isCopy, isPlaying, onPlay, onBusyChange }) {
   const cardRef = useRef(null);
 
   const handlePlay = () => {
-    onPlay(item.id);
-    // Bring the clicked card to the center of the carousel.
+    onPlay(cardKey);
+    // Bring the clicked card to the center of the slider.
     if (cardRef.current) {
       cardRef.current.scrollIntoView({
         behavior: "smooth",
@@ -265,29 +305,32 @@ function VideoCard({ item, index, isPlaying, onPlay }) {
   return (
     <article
       ref={cardRef}
-      className="w-[200px] shrink-0 snap-start overflow-hidden rounded-2xl border border-line bg-white shadow-[0_8px_24px_rgba(7,29,54,0.07)] sm:w-[240px]"
+      aria-hidden={isCopy && !isPlaying}
+      className="w-[200px] shrink-0 overflow-hidden rounded-2xl border border-line bg-white shadow-[0_8px_24px_rgba(7,29,54,0.07)] sm:w-[240px]"
     >
       <div className="relative aspect-[9/16] w-full bg-navy">
         {isPlaying ? (
-          <VideoPlayer id={item.id} title={item.title} />
+          <VideoPlayer id={item.id} title={item.title} onBusyChange={onBusyChange} />
         ) : (
           <button
             type="button"
             onClick={handlePlay}
+            tabIndex={isCopy ? -1 : 0}
             aria-label={`Play video: ${item.title}`}
             className="group absolute inset-0 h-full w-full focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-white"
           >
             <img
               src={`https://i.ytimg.com/vi/${item.id}/hqdefault.jpg`}
-              alt={item.title}
+              alt={isCopy ? "" : item.title}
               loading="lazy"
+              draggable="false"
               className="h-full w-full object-cover"
             />
             <span className="absolute inset-0 bg-navy/25 transition group-hover:bg-navy/10" />
 
             {/* Card number, so cards with the same thumbnail are easy to tell apart */}
             <span className="absolute left-2.5 top-2.5 rounded-full bg-navy/80 px-2 py-0.5 text-[10px] font-extrabold text-white">
-              {String(index + 1).padStart(2, "0")}
+              {String(number).padStart(2, "0")}
             </span>
 
             <span className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-xl ring-4 ring-white/40 transition group-hover:scale-110">
@@ -305,6 +348,7 @@ function VideoCard({ item, index, isPlaying, onPlay }) {
           href={`https://www.youtube.com/shorts/${item.id}`}
           target="_blank"
           rel="noopener noreferrer"
+          tabIndex={isCopy ? -1 : 0}
           className="mt-1 inline-block text-[11px] font-bold text-navy/60 underline-offset-2 hover:text-navy hover:underline"
         >
           Watch On YouTube
@@ -316,14 +360,114 @@ function VideoCard({ item, index, isPlaying, onPlay }) {
 
 /* ---------- Section ---------- */
 function AudioFeedback() {
-  const [playingId, setPlayingId] = useState(null);
+  const [playingKey, setPlayingKey] = useState(null);
 
-  const uniqueVideoFeedback = videoFeedback.filter(
-    (item, index, items) => items.findIndex((entry) => entry.id === item.id) === index
-  );
+  const wrapperRef = useRef(null);
+  const scrollerRef = useRef(null);
+
+  // Notes for the auto-scroll. Changing these does not redraw the page.
+  const control = useRef({
+    hovering: false, // mouse is over the slider
+    pressing: false, // finger or mouse button is down
+    focused: false, // a card is selected with the keyboard
+    inView: false, // slider is visible on screen
+    videoBusy: false, // a video is loading or playing
+    lastInteraction: 0, // time of the last touch, scroll, click or key press
+  });
+
+  // Call this whenever the user does something with the slider
+  function markInteraction() {
+    control.current.lastInteraction = performance.now();
+  }
+
+  // The video player uses this to say "a video is loading or playing"
+  const handleBusyChange = useCallback((busy) => {
+    control.current.videoBusy = busy;
+    control.current.lastInteraction = performance.now();
+  }, []);
+
+  // The auto-scroll loop
+  useEffect(() => {
+    // People who turned on "reduce motion" on their device get no auto-scroll
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const scroller = scrollerRef.current;
+    let position = scroller.scrollLeft;
+    let lastTime = performance.now();
+    let frame;
+
+    function move(now) {
+      // Time since the last frame (limited, so coming back to the tab does not jump)
+      const seconds = Math.min(now - lastTime, 50) / 1000;
+      lastTime = now;
+      const state = control.current;
+
+      // If the slider is not where we left it, the user moved it (swipe, arrows, keys)
+      if (Math.abs(scroller.scrollLeft - position) > 2) {
+        state.lastInteraction = now;
+        position = scroller.scrollLeft;
+      }
+
+      const waiting = now - state.lastInteraction < resumeAfter;
+      const stopped =
+        state.hovering || state.pressing || state.focused || state.videoBusy || !state.inView || waiting;
+
+      if (!stopped) {
+        const loopWidth = getLoopWidth(scroller);
+        position += autoScrollSpeed * autoScrollDirection * seconds;
+        if (position >= loopWidth) position -= loopWidth;
+        if (position < 0) position += loopWidth;
+        scroller.scrollTo({ left: position, behavior: "instant" });
+      }
+
+      frame = requestAnimationFrame(move);
+    }
+
+    // A finger or mouse button lifted anywhere on the page
+    function release() {
+      control.current.pressing = false;
+      control.current.lastInteraction = performance.now();
+    }
+
+    frame = requestAnimationFrame(move);
+    window.addEventListener("pointerup", release);
+    window.addEventListener("pointercancel", release);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("pointerup", release);
+      window.removeEventListener("pointercancel", release);
+    };
+  }, []);
+
+  // Find out when the slider is on screen (no need to move it when nobody sees it)
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        control.current.inView = entry.isIntersecting;
+      },
+      { threshold: 0.2 }
+    );
+    observer.observe(wrapperRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // Arrow buttons: direction is -1 (back) or 1 (forward)
+  function moveBy(direction) {
+    markInteraction();
+    const scroller = scrollerRef.current;
+    const distance = getStep(scroller) * 2;
+
+    // At the very start, jump to the same spot in the next copy, then go back
+    if (direction < 0 && scroller.scrollLeft < distance) {
+      scroller.scrollTo({ left: scroller.scrollLeft + getLoopWidth(scroller), behavior: "instant" });
+    }
+
+    scroller.scrollBy({ left: direction * distance, behavior: "smooth" });
+  }
 
   return (
-    <Section id="audio-feedback" className="border-y border-[#ddeaf3] bg-[#edf5fb]">
+    <Section id="audio-feedback" className="overflow-hidden border-y border-[#ddeaf3] bg-[#edf5fb]">
       <SectionHeading
         className="mb-10"
         eyebrow="Watch Real Experiences"
@@ -331,17 +475,75 @@ function AudioFeedback() {
         text={`Watch ${uniqueVideoFeedback.length} WayForSky student experiences directly inside the page.`}
       />
 
-      <Carousel label="Video feedback">
-        {uniqueVideoFeedback.map((item, index) => (
-          <VideoCard
-            key={item.id}
-            item={item}
-            index={index}
-            isPlaying={playingId === item.id}
-            onPlay={setPlayingId}
-          />
-        ))}
-      </Carousel>
+      <div
+        ref={wrapperRef}
+        className="relative"
+        onPointerEnter={(event) => {
+          if (event.pointerType === "mouse") control.current.hovering = true;
+        }}
+        onPointerLeave={(event) => {
+          if (event.pointerType === "mouse") {
+            control.current.hovering = false;
+            markInteraction();
+          }
+        }}
+        onPointerDown={() => {
+          control.current.pressing = true;
+          markInteraction();
+        }}
+        onTouchMove={markInteraction}
+        onWheel={markInteraction}
+        onKeyDown={markInteraction}
+        onFocus={(event) => {
+          if (event.target.matches(":focus-visible")) control.current.focused = true;
+        }}
+        onBlur={() => {
+          control.current.focused = false;
+          markInteraction();
+        }}
+      >
+        {/* The slider: glides by itself, swipe it or use the arrows any time */}
+        <div
+          ref={scrollerRef}
+          aria-label="Video feedback"
+          className="-mx-4 flex gap-3 overflow-x-auto overscroll-x-contain px-4 pb-4 [scroll-behavior:auto] [scrollbar-width:none] sm:-mx-5 sm:px-5 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden"
+        >
+          {loopedVideos.map((item, index) => {
+            const cardKey = `${item.id}-${index}`;
+
+            return (
+              <VideoCard
+                key={cardKey}
+                item={item}
+                number={(index % uniqueVideoFeedback.length) + 1}
+                cardKey={cardKey}
+                isCopy={index >= uniqueVideoFeedback.length}
+                isPlaying={playingKey === cardKey}
+                onPlay={setPlayingKey}
+                onBusyChange={handleBusyChange}
+              />
+            );
+          })}
+        </div>
+
+        {/* Arrow buttons (tablet and desktop) */}
+        <button
+          type="button"
+          onClick={() => moveBy(-1)}
+          aria-label="Previous videos"
+          className="absolute left-2 top-[40%] z-10 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-line bg-white text-navy shadow-lg transition hover:bg-[#edf4fa] sm:grid"
+        >
+          <ChevronLeft size={22} aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          onClick={() => moveBy(1)}
+          aria-label="Next videos"
+          className="absolute right-2 top-[40%] z-10 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-line bg-white text-navy shadow-lg transition hover:bg-[#edf4fa] sm:grid"
+        >
+          <ChevronRight size={22} aria-hidden="true" />
+        </button>
+      </div>
     </Section>
   );
 }
