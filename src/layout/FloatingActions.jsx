@@ -1,35 +1,119 @@
-import { Phone, Instagram, Sparkles } from "lucide-react";
 import { links } from "../data/links.js";
+import skymo from "../assets/images/skymo.jpg";
 
-function WhatsAppIcon({ size = 18, className = "" }) {
+/* Every icon is drawn to fill its whole chip, so all four look the same size
+   and sit exactly in the centre of their circle. */
+
+function WhatsAppIcon({ className = "" }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      fill="currentColor"
-      aria-hidden="true"
-      className={className}
-    >
-      <path d="M12.04 2a9.86 9.86 0 0 0-8.4 15.04L2.1 22l5.1-1.48A9.92 9.92 0 1 0 12.04 2Zm0 17.98a8.05 8.05 0 0 1-4.1-1.13l-.29-.17-3.02.88.89-2.95-.19-.3a8.03 8.03 0 1 1 6.71 3.67Zm4.41-6.02c-.24-.12-1.43-.7-1.65-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.01-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.29-.74-1.77-.2-.47-.4-.41-.54-.42h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.69 2.58 4.1 3.62.57.25 1.02.39 1.37.5.58.18 1.1.16 1.52.1.46-.07 1.43-.58 1.63-1.15.2-.56.2-1.04.14-1.15-.06-.1-.22-.16-.46-.28Z" />
+    // Tight viewBox crops the empty margin so the badge fills the chip.
+    <svg viewBox="2.6 2.6 26.8 26.8" aria-hidden="true" className={className}>
+      <path
+        fill="#25D366"
+        d="M16 3A12.7 12.7 0 0 0 5.2 22.3L3.4 29l6.9-1.8A12.7 12.7 0 1 0 16 3Z"
+      />
+      <path
+        fill="#fff"
+        d="M16 6.1a9.6 9.6 0 0 0-8.2 14.6l.3.5-1.1 4.1 4.2-1.1.5.3A9.6 9.6 0 1 0 16 6.1Zm5.8 13.7c-.3.8-1.7 1.6-2.3 1.7-.6.1-1.3.2-2.1-.1-.5-.2-1.2-.4-2-.8-3.5-1.5-5.8-5.1-6-5.3-.2-.3-1.4-1.9-1.4-3.6 0-1.7.9-2.6 1.2-3 .3-.3.7-.4.9-.4h.7c.2 0 .5 0 .8.6.3.7 1 2.4 1.1 2.6.1.2.2.4 0 .7-.1.2-.2.4-.4.6l-.6.7c-.2.2-.4.4-.2.8.2.4 1 1.6 2.1 2.6 1.4 1.3 2.7 1.7 3.1 1.9.4.2.7.1.9-.1.3-.3.8-.9 1-1.2.2-.3.5-.2.8-.1.3.1 2 .9 2.4 1.1.3.2.6.3.7.4.1.2.1 1.1-.2 1.9Z"
+      />
     </svg>
   );
 }
 
-// The round buttons fixed to the bottom-right corner of the screen.
-// On phones only the icons show; on bigger screens the text shows too.
+function PhoneIcon({ className = "" }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+      <path
+        d="M7.1 3.5 4.8 4.7c-.8.4-1.2 1.3-1 2.2 1.2 5.4 5 9.2 10.4 10.4.9.2 1.8-.2 2.2-1l1.2-2.3-4-1.7-1.3 1.5c-2-.8-3.7-2.5-4.5-4.5l1.5-1.3-2.2-4.5Z"
+        fill="currentColor"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function InstagramIcon({ className = "" }) {
+  return (
+    <svg viewBox="0 0 32 32" aria-hidden="true" className={className}>
+      <defs>
+        <radialGradient id="instagram-gradient" cx="0.25" cy="1" r="1.2">
+          <stop offset="0" stopColor="#FFD600" />
+          <stop offset="0.25" stopColor="#FF7A00" />
+          <stop offset="0.55" stopColor="#FF0169" />
+          <stop offset="0.78" stopColor="#D300C5" />
+          <stop offset="1" stopColor="#7638FA" />
+        </radialGradient>
+      </defs>
+      <rect width="32" height="32" rx="8" fill="url(#instagram-gradient)" />
+      <rect x="7.5" y="7.5" width="17" height="17" rx="5" fill="none" stroke="#fff" strokeWidth="2.2" />
+      <circle cx="16" cy="16" r="4.2" fill="none" stroke="#fff" strokeWidth="2.2" />
+      <circle cx="22.1" cy="10.2" r="1.3" fill="#fff" />
+    </svg>
+  );
+}
+
+function SkymoIcon({ className = "" }) {
+  return (
+    // White backing + object-contain keeps the whole cartoon visible (no cropping),
+    // and object-center keeps it centred inside the circle.
+    <span className={`flex items-center justify-center rounded-full bg-white ${className}`}>
+      <img
+        src={skymo}
+        alt=""
+        aria-hidden="true"
+        draggable="false"
+        className="h-full w-full scale-[1.12] object-contain object-center"
+      />
+    </span>
+  );
+}
+
+// fill: the icon is its own badge and fills the entire chip.
+// chip: circle behind icons that are not badges.
+// pill: button colour on desktop (md and up).
 const actions = [
-  { label: "WhatsApp", href: links.whatsapp, icon: WhatsAppIcon, colour: "bg-[#168b54]", external: true },
-  { label: "Request Call", href: "#register", icon: Phone, colour: "bg-[#155b9b]" },
-  { label: "Instagram", href: links.instagram, icon: Instagram, colour: "bg-[#a43b83]", external: true },
-  { label: "Ask Skymo", href: "#skymo", icon: Sparkles, colour: "bg-navy-light" },
+  {
+    label: "WhatsApp",
+    href: links.whatsapp,
+    icon: WhatsAppIcon,
+    fill: true,
+    pill: "md:bg-[#168b54]",
+    external: true,
+  },
+  {
+    label: "Request Call",
+    href: "#register",
+    icon: PhoneIcon,
+    chip: "bg-[#155b9b] text-white",
+    pill: "md:bg-[#155b9b]",
+  },
+  {
+    label: "Instagram",
+    href: links.instagram,
+    icon: InstagramIcon,
+    fill: true,
+    pill: "md:bg-gradient-to-r md:from-[#f58529] md:via-[#dd2a7b] md:to-[#8134af]",
+    external: true,
+  },
+  {
+    label: "Ask Skymo",
+    href: "#skymo",
+    icon: SkymoIcon,
+    fill: true,
+    chip: "ring-1 ring-black/10",
+    pill: "md:bg-navy-light",
+  },
 ];
 
 function FloatingActions() {
   return (
-    <div
+    <nav
       aria-label="Quick contact links"
-      className="fixed bottom-[max(0.65rem,env(safe-area-inset-bottom))] left-1/2 z-50 flex w-fit -translate-x-1/2 items-center gap-1.5 rounded-full border border-white/80 bg-white/95 p-1.5 shadow-[0_8px_24px_rgba(7,29,54,0.22)] backdrop-blur-md md:bottom-6 md:left-auto md:right-4 md:w-auto md:translate-x-0 md:flex-col md:items-stretch md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none"
+      // inset-x-0 + mx-auto + w-fit centres the dock without the width squeeze
+      // that left-1/2 causes. On desktop it docks to the bottom-right instead.
+      className="fixed inset-x-0 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-50 mx-auto flex w-fit items-center justify-center gap-2.5 rounded-full border border-white/80 bg-white/95 px-3 py-2 shadow-[0_10px_26px_rgba(7,29,54,0.30)] backdrop-blur-md md:inset-x-auto md:bottom-5 md:right-3 md:mx-0 md:flex-col md:items-stretch md:gap-1.5 md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none"
     >
       {actions.map((action) => {
         const Icon = action.icon;
@@ -45,15 +129,20 @@ function FloatingActions() {
                 window.dispatchEvent(new Event("open-scholarship-popup"));
               }
             }}
-            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white shadow-md transition active:scale-[0.96] md:h-auto md:w-auto md:min-w-[140px] md:flex-row md:gap-2 md:rounded-full md:px-4 md:py-2.5 ${action.colour}`}
+            className={`flex shrink-0 items-center justify-center rounded-full transition active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#155b9b] md:justify-start md:gap-2 md:py-1 md:pl-1 md:pr-3 md:text-white md:shadow-md ${action.pill}`}
             {...(action.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           >
-            <Icon size={18} className="md:w-[16px]" />
-            <span className="hidden text-xs font-extrabold md:inline">{action.label}</span>
+            {/* 48px chip on phones, 30px on desktop */}
+            <span
+              className={`flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full md:h-[30px] md:w-[30px] ${action.chip ?? ""}`}
+            >
+              <Icon className={action.fill ? "h-full w-full" : "h-7 w-7 md:h-4 md:w-4"} />
+            </span>
+            <span className="hidden text-xs font-bold md:inline">{action.label}</span>
           </a>
         );
       })}
-    </div>
+    </nav>
   );
 }
 

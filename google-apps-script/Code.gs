@@ -4,7 +4,10 @@
 const SHEET_ID = "1dmtvmr21OIPImAihD5xNsyVi15eAmHygJXl8WbmKDmE";
 const SHEET_NAME = "Registrations";
 const TIMEZONE = "Asia/Kolkata";
-const SCRIPT_VERSION = "v3";
+const SCRIPT_VERSION = "v4";
+const CHATVERSE_TEMPLATE_URL =
+  "https://api.chatverse.io/v1/whatsapp/templates/whatsapp_lp/send";
+const CHATVERSE_TEMPLATE_LANGUAGE = "en_US";
 
 /* ---------- Receives the form data from the website ---------- */
 function doPost(event) {
@@ -52,7 +55,18 @@ function doPost(event) {
         ],
       ]);
 
-    return jsonResponse({ success: true });
+    // Send WhatsApp message after saving the registration.
+    let whatsapp = { sent: false, message: "Not attempted" };
+
+    try {
+      const messageResult = sendWhatsAppMessage(mobile);
+      whatsapp = { sent: true, message: "Sent", result: messageResult };
+    } catch (whatsappError) {
+      whatsapp = { sent: false, message: whatsappError.message };
+      Logger.log("WhatsApp message failed: " + whatsappError.message);
+    }
+
+    return jsonResponse({ success: true, whatsapp: whatsapp });
   } catch (error) {
     return jsonResponse({ success: false, message: error.message });
   } finally {
@@ -87,6 +101,19 @@ function testSubmit() {
 
   const result = doPost(fakeEvent);
   Logger.log(result.getContent());
+}
+
+/* ---------- TEST: standalone WhatsApp message function ----------
+   Sends a test WhatsApp message to the configured number.
+   Check the Logs for success or error message. */
+function testWhatsApp() {
+  const testMobile = "9876543210"; // Replace once with your WhatsApp number
+  try {
+    const result = sendWhatsAppMessage(testMobile);
+    Logger.log("Test message accepted: " + JSON.stringify(result));
+  } catch (error) {
+    Logger.log("Test message failed: " + error.message);
+  }
 }
 
 /* ---------- Helpers ---------- */
@@ -126,4 +153,49 @@ function jsonResponse(payload) {
   return ContentService.createTextOutput(JSON.stringify(payload)).setMimeType(
     ContentService.MimeType.JSON,
   );
+}
+
+/* ---------- WhatsApp Messaging ---------- */
+
+function sendWhatsAppMessage(mobile) {
+  const apiKey =
+    PropertiesService.getScriptProperties().getProperty("CHATVERSE_API_KEY");
+  if (!apiKey) {
+    throw new Error("CHATVERSE_API_KEY is missing from Script Properties");
+  }
+
+  const recipient = mobile.startsWith("91") ? mobile : "91" + mobile;
+  const payload = {
+    to: recipient,
+    language: CHATVERSE_TEMPLATE_LANGUAGE,
+  };
+
+  const options = {
+    method: "post",
+    muteHttpExceptions: true,
+    contentType: "application/json",
+    headers: {
+      Authorization: "Bearer " + apiKey,
+    },
+    payload: JSON.stringify(payload),
+  };
+
+  const response = UrlFetchApp.fetch(CHATVERSE_TEMPLATE_URL, options);
+  const status = response.getResponseCode();
+  const body = response.getContentText();
+
+  Logger.log("Chatverse HTTP " + status + ": " + body);
+
+  let result;
+  try {
+    result = JSON.parse(body);
+  } catch (error) {
+    throw new Error("Chatverse returned invalid JSON (HTTP " + status + ")");
+  }
+
+  if (status < 200 || status >= 300) {
+    throw new Error("Chatverse HTTP " + status + ": " + body);
+  }
+
+  return result;
 }

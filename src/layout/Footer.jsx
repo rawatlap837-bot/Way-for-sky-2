@@ -1,6 +1,6 @@
-import { Plane } from "lucide-react";
 import Container from "../components/Container.jsx";
 import { links } from "../data/links.js";
+import logo from "../assets/images/logo.jpg";
 
 // Footer links. Add, remove or rename links here.
 const footerLinks = [
@@ -18,13 +18,14 @@ function Footer() {
       <Container className="flex flex-wrap items-center justify-between gap-6">
         {/* Brand + tagline */}
         <div>
-          <div className="flex items-center gap-3 text-[22px] font-extrabold tracking-tight text-white">
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/10">
-              <Plane size={22} />
-            </span>
-            WayForSky
-          </div>
-          <p className="mt-2 max-w-xs text-xs text-[#879aaa]">
+          <a href="#home" aria-label="WayForSky home" className="block w-fit">
+            <img
+              src={logo}
+              alt="WayForSky – Global Aviation Pathway"
+              className="h-12 w-auto rounded-lg bg-white px-2 py-1"
+            />
+          </a>
+          <p className="mt-3 max-w-xs text-xs text-[#879aaa]">
             Global Aviation Pathway · Helping aspiring pilots take informed next steps.
           </p>
         </div>
