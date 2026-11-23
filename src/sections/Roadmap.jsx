@@ -1,393 +1,145 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  BarChart3,
-  BookOpen,
-  CalendarDays,
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  ClipboardCheck,
-  Clock,
-  Compass,
-  CloudSun,
-  Layers,
-  MessageSquare,
-  MonitorPlay,
-  Plane,
-  Radio,
-  Scale,
-  Settings,
-  Target,
-  Video,
-  Wrench,
-} from "lucide-react";
 import Section from "../components/Section.jsx";
-import SectionHeading from "../components/SectionHeading.jsx";
 
-// ---------- Easy-to-edit settings ----------
-// The button opens your Register popup (same link the Hero buttons use).
-const applyLink = "#register";
-
-// Same on every subject card
-const learningMode = "Online | Offline | Hybrid";
-const classSchedule = "Weekday & Weekend Batches";
-
-// Training inclusions are the same for most subjects
-const standardInclusions = [
-  "Live Interactive Classes",
-  "Comprehensive Study Notes",
-  "Practice Questions & Mock Tests",
-  "Doubt-Clearing Sessions",
-  "DGCA Exam Preparation & Guidance",
-];
-
-// The six subject cards.
-// icon -> the big faded icon in the blue header of the card
-const subjects = [
+// ---------- Easy-to-edit content ----------
+// number   -> shown automatically (01, 02, 03 ...)
+// tag      -> the yellow pill at the top of the card
+// title    -> the bold card heading
+// text     -> the short grey description
+// supports -> the blue text under the divider line (after "WayForSky supports:")
+const steps = [
   {
-    name: "Air Regulations",
-    icon: Scale,
-    about: "Understand The Rules, Laws And Regulations That Govern Safe, Legal And Efficient Aviation Operations.",
-    duration: "6 – 8 Weeks",
-    learn: [
-      "Aviation Law & Regulatory Framework",
-      "ICAO Annexes & SARPs",
-      "DGCA Rules & Civil Aviation Requirements (CAR)",
-      "Personnel, Aircraft & Operations Regulations",
-      "Safety, Compliance & Legal Responsibilities",
-    ],
-    inclusions: standardInclusions,
+    tag: "Starting point",
+    title: "DGCA Ground Classes",
+    text: "Build strong aviation fundamentals and prepare for the six DGCA theory subjects.",
+    supports:
+      "ground-class learning, instructor guidance, study structure and exam preparation support.",
   },
   {
-    name: "Technical Specific",
-    icon: Wrench,
-    about: "Gain In-Depth Knowledge Of Aircraft Systems, Components And Their Operation For A Specific Aircraft Type (Class/Category).",
-    duration: "6 – 8 Weeks",
-    learn: [
-      "In-Depth Aircraft Systems (Type Specific)",
-      "System Components & Operation",
-      "Normal & Abnormal Procedures",
-      "Troubleshooting & Fault Isolation",
-      "Maintenance Practices & Safety Requirements",
-    ],
-    inclusions: standardInclusions,
+    tag: "Optional · Recommended",
+    title: "Aviation-Related Degree",
+    text: "Explore a recognised aviation or management degree alongside your career plan.",
+    supports:
+      "information and guidance on suitable academic pathways. Admission depends on institution criteria.",
   },
   {
-    name: "Technical General",
-    icon: Settings,
-    about: "Learn The Fundamentals Of Aircraft Systems, Components And Their Operation For Safe And Efficient Flight.",
-    duration: "6 – 8 Weeks",
-    learn: [
-      "Aircraft Structure & Materials",
-      "Powerplant (Engine) Basics",
-      "Systems – Electrical, Hydraulic, Pneumatic & Fuel",
-      "Instruments & Cockpit Systems",
-      "Aircraft Maintenance & Safety Practices",
-    ],
-    inclusions: standardInclusions,
+    tag: "Flight training stage",
+    title: "CPL Flight Training",
+    text: "Progress to practical flight training and work towards the Commercial Pilot Licence requirements.",
+    supports:
+      "pathway counselling, academic coordination and guidance on documentation and next steps.",
   },
   {
-    name: "Radio Telephony",
-    icon: Radio,
-    about: "Learn Professional Aviation Communication For Safe, Clear And Standardised Flight Operations.",
-    duration: "4 – 6 Weeks",
-    learn: [
-      "Aviation Communication Procedures",
-      "Standard R/T Phraseology",
-      "ATC Communication – VFR & IFR",
-      "Emergency & Non-Normal Calls",
-      "Communication Etiquette & DGCA/ICAO Requirements",
-    ],
-    inclusions: [
-      "Live Interactive Classes",
-      "RT Phraseology Study Notes",
-      "ATC Simulation & Practice Calls",
-      "Mock R/T Tests & Assessments",
-      "DGCA Exam Preparation & Guidance",
-    ],
+    tag: "Career planning",
+    title: "Choose Your Career Direction",
+    text: "Explore airline pilot, flight instructor, charter pilot and other aviation career options.",
+    supports:
+      "one-to-one pathway discussions to help you understand routes, requirements and choices.",
   },
   {
-    name: "Meteorology",
-    icon: CloudSun,
-    about: "Learn The Science Of Weather And Its Impact On Flight Planning, Performance And Safety.",
-    duration: "6 – 8 Weeks",
-    learn: [
-      "Structure Of The Atmosphere",
-      "Weather Systems & Forecasting",
-      "Clouds, Precipitation & Visibility",
-      "Wind, Pressure & Temperature",
-      "Aviation Weather Reports (METAR, TAF)",
-      "Weather Hazards & Flight Safety",
-    ],
-    inclusions: standardInclusions,
+    tag: "Optional · Specialisation",
+    title: "Instructor Rating",
+    text: "For students interested in becoming a certified flight instructor, explore the required rating.",
+    supports:
+      "information on training routes and eligibility. This stage is optional and subject to requirements.",
   },
   {
-    name: "Air Navigation",
-    icon: Compass,
-    about: "Learn The Art And Science Of Aircraft Navigation — From Route Planning To In-Flight Navigation And Position Determination.",
-    duration: "6 – 8 Weeks",
-    learn: [
-      "Principles Of Navigation",
-      "Flight Planning & Performance",
-      "Charts, Maps & Navigation Aids",
-      "Position Determination & Tracking",
-      "Radio Navigation (VOR, NDB, GNSS)",
-      "Navigation Calculations & In-Flight Procedures",
-    ],
-    inclusions: standardInclusions,
+    tag: "Build experience",
+    title: "Experience & Opportunities",
+    text: "Explore relevant opportunities to build flying experience and develop your professional profile.",
+    supports:
+      "career guidance and sharing relevant opportunities when available. Roles depend on vacancies and eligibility.",
+  },
+  {
+    tag: "Career preparation",
+    title: "Airline Readiness",
+    text: "Prepare for airline selection through interview practice, communication and technical preparation.",
+    supports:
+      "readiness guidance, preparation resources and interview practice where offered.",
+  },
+  {
+    tag: "Advanced pathway",
+    title: "Cadet Programme & Type Rating",
+    text: "Explore cadet programmes and aircraft-specific type rating routes where suitable.",
+    supports:
+      "explaining programme options and application steps. Selection, licensing and employment are not guaranteed.",
   },
 ];
 
-// One small icon per inclusion line (same order as the list)
-const inclusionIcons = [Video, BookOpen, ClipboardCheck, MessageSquare, BarChart3];
-
-// ---------- Small pieces used inside every card ----------
-
-// One row of the "Course Duration / Learning Mode / Class Schedule" box
-function Stat({ Icon, label, value }) {
+// One roadmap card
+function StepCard({ step, number }) {
   return (
-    <div className="flex items-center gap-3 px-3 py-2.5">
-      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#e4effc] text-[#1a5bd6]">
-        <Icon className="h-5 w-5" aria-hidden="true" />
+    <article className="relative z-10 flex flex-col items-center rounded-3xl border border-[#dbe7ef] bg-white px-5 pb-6 pt-10 text-center shadow-[0_8px_24px_rgba(7,29,54,0.06)]">
+      {/* Number badge sitting on the top edge of the card */}
+      <span className="absolute left-1/2 top-0 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-gradient-to-b from-[#1a5bd6] to-[#0a2a7a] text-[16px] font-black text-white shadow-[0_0_0_4px_#e4effc,0_6px_14px_rgba(10,42,122,0.30)]">
+        {String(number).padStart(2, "0")}
       </span>
-      <div className="min-w-0">
-        <p className="text-[12px] font-semibold leading-tight text-[#5b6f86]">{label}</p>
-        <p className="text-[14px] font-extrabold leading-tight text-[#0a1f5c]">{value}</p>
-      </div>
-    </div>
-  );
-}
 
-// A blue title pill with a list underneath ("What You'll Learn" / "Training Inclusions")
-function ListBlock({ Icon, title, children }) {
-  return (
-    <div className="rounded-2xl border border-[#d6e3ef] bg-white p-3 shadow-sm">
-      <h4 className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#0a3cb0] to-[#1a5bd6] px-3 py-1.5 text-[13px] font-bold italic text-white">
-        <Icon className="h-4 w-4" aria-hidden="true" />
-        {title}
-      </h4>
-      <ul className="space-y-2">{children}</ul>
-    </div>
-  );
-}
+      <span className="mb-3 inline-block rounded-full bg-[#fdf0b8] px-3 py-1 text-[12px] font-extrabold text-[#8a5a00]">
+        {step.tag}
+      </span>
 
-// "DGCA Ground Classes" subject slider (id="subjects").
-// Phones: swipe sideways, the next card peeks in from the right.
-// Desktop: three cards visible, use the arrows or the subject tabs.
-function Subjects() {
-  const scrollerRef = useRef(null);
-  const tabsRef = useRef(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const lastIndex = subjects.length - 1;
+      <h3 className="mb-2 text-[19px] font-extrabold leading-tight text-[#0a1f5c]">
+        {step.title}
+      </h3>
 
-  // Work out which card is at the left edge while scrolling
-  function handleScroll() {
-    const scroller = scrollerRef.current;
-    const cards = scroller.children;
-    const step = cards[1].offsetLeft - cards[0].offsetLeft;
-    const atEnd = scroller.scrollLeft + scroller.clientWidth >= scroller.scrollWidth - 4;
-    const index = atEnd ? lastIndex : Math.round(scroller.scrollLeft / step);
-    setActiveIndex(Math.min(Math.max(index, 0), lastIndex));
-  }
+      <p className="mb-4 text-[14px] leading-relaxed text-[#5b6f86]">{step.text}</p>
 
-  // Slide to a card by its number
-  function goTo(index) {
-    const scroller = scrollerRef.current;
-    const card = scroller.children[index];
-    scroller.scrollTo({
-      left: card.offsetLeft - scroller.children[0].offsetLeft,
-      behavior: "smooth",
-    });
-  }
-
-  // Left / right arrow keys also move between cards
-  function handleKeyDown(event) {
-    if (event.key === "ArrowRight") goTo(Math.min(activeIndex + 1, lastIndex));
-    if (event.key === "ArrowLeft") goTo(Math.max(activeIndex - 1, 0));
-  }
-
-  // Keep the selected subject tab in view
-  useEffect(() => {
-    const tabs = tabsRef.current;
-    const tab = tabs.children[activeIndex];
-    tabs.scrollTo({
-      left: tab.offsetLeft - (tabs.clientWidth - tab.clientWidth) / 2,
-      behavior: "smooth",
-    });
-  }, [activeIndex]);
-
-  return (
-    <Section id="subjects" className="overflow-hidden bg-gradient-to-b from-white to-[#f1f7fd]">
-      <SectionHeading
-        className="mb-5"
-        eyebrow="Six DGCA Ground Classes"
-        title="Choose Your Subject. Swipe To See All Six."
-      />
-
-      <p className="mx-auto mb-6 max-w-[760px] text-center text-sm text-muted">
-        Every subject has its own live classes, study notes, mock tests and doubt-clearing
-        sessions. Pick a subject below or swipe through the cards.
+      {/* Divider + support text stay at the bottom of the card */}
+      <p className="mt-auto w-full border-t border-[#e0eaf4] pt-4 text-[12.5px] font-bold leading-relaxed text-[#15558b]">
+        WayForSky supports: {step.supports}
       </p>
+    </article>
+  );
+}
 
-      {/* Subject tabs: tap a name to jump straight to that card */}
-      <div
-        ref={tabsRef}
-        className="relative -mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:-mx-5 sm:px-5 md:mx-0 md:justify-center md:px-0 [&::-webkit-scrollbar]:hidden"
-        aria-label="Choose a subject"
-      >
-        {subjects.map((subject, index) => (
-          <button
-            key={subject.name}
-            type="button"
-            onClick={() => goTo(index)}
-            aria-current={index === activeIndex}
-            className={`shrink-0 rounded-full border px-4 py-2 text-[13px] font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a3cb0] ${index === activeIndex
-              ? "border-[#0a3cb0] bg-[#0a3cb0] text-white shadow-md"
-              : "border-[#c9dced] bg-white text-[#0a1f5c] hover:bg-[#edf4fa]"
-              }`}
-          >
-            {subject.name}
-          </button>
+// Roadmap section: "From your first class to your aviation career pathway."
+// Desktop: 4 cards per row with a road strip between the two rows.
+// Tablet: 2 cards per row. Phone: 1 card per row (road strip hidden).
+function Roadmap() {
+  const firstRow = steps.slice(0, 4);
+  const secondRow = steps.slice(4);
+
+  return (
+    <Section id="roadmap" className="bg-gradient-to-b from-[#f8fbfd] to-[#eaf3fc]">
+      {/* Heading */}
+      <div className="mx-auto mb-10 max-w-[900px] text-center sm:mb-14">
+        <h2 className="text-[32px] font-black leading-[1.1] tracking-[-0.03em] text-[#0a1f5c] sm:text-[44px] lg:text-[52px]">
+          From your first class to your aviation career pathway.
+        </h2>
+        <p className="mx-auto mt-6 max-w-[760px] text-[15px] leading-relaxed text-[#5b6f86] sm:text-[16px]">
+          When you join WayForSky, we guide you through the stages, explain what comes next
+          and support you in planning each step. Follow the road map below to see how the
+          journey can progress.
+        </p>
+      </div>
+
+      {/* pt-6 leaves room for the number badges that stick out above the first row */}
+      <div className="grid grid-cols-1 gap-x-6 gap-y-10 pt-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-y-0">
+        {firstRow.map((step, i) => (
+          <StepCard key={step.title} step={step} number={i + 1} />
+        ))}
+
+        {/* Road strip between the two rows (desktop only) */}
+        <div
+          aria-hidden="true"
+          className="relative z-0 hidden h-10 items-center rounded-full bg-gradient-to-b from-[#8fa1b5] to-[#5f7389] px-6 shadow-[inset_0_2px_4px_rgba(0,0,0,0.25)] lg:col-span-4 lg:mx-[7%] lg:flex"
+        >
+          <div className="w-full border-t-4 border-dashed border-[#ffdc3d]" />
+        </div>
+
+        {secondRow.map((step, i) => (
+          <StepCard key={step.title} step={step} number={i + firstRow.length + 1} />
         ))}
       </div>
 
-      {/* The slider. -mx and px let the next card peek in from the screen edge.
-          scroll-px keeps a snapped card inside the page padding instead of touching the edge. */}
-      <div
-        ref={scrollerRef}
-        onScroll={handleScroll}
-        onKeyDown={handleKeyDown}
-        tabIndex={0}
-        className="relative -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto scroll-smooth px-4 pb-4 outline-none [scrollbar-width:none] sm:-mx-5 sm:scroll-px-5 sm:px-5 md:mx-0 md:scroll-px-0 md:px-0 [&::-webkit-scrollbar]:hidden"
-        aria-label="DGCA ground class subjects. Use the left and right arrow keys to move between subjects."
-      >
-        {subjects.map((subject) => {
-          const SubjectIcon = subject.icon;
-
-          return (
-            <article
-              key={subject.name}
-              className="flex w-[88%] max-w-[380px] shrink-0 snap-start flex-col overflow-hidden rounded-3xl border border-[#c9dced] bg-white shadow-[0_12px_28px_rgba(19,68,108,0.10)] md:w-[360px]"
-            >
-              {/* Blue header: subject name and short text */}
-              <div className="relative overflow-hidden bg-gradient-to-br from-[#0a2a7a] via-[#0a3cb0] to-[#1a6fe0] px-4 pb-5 pt-4">
-                <SubjectIcon
-                  className="absolute -right-4 -top-4 h-32 w-32 text-white/10"
-                  strokeWidth={1.5}
-                  aria-hidden="true"
-                />
-
-                <span className="relative inline-block rounded-full bg-[#ffdc3d] px-3 py-1 text-[11px] font-extrabold text-[#0a1f5c]">
-                  DGCA Subject
-                </span>
-                <h3 className="relative mt-3 text-[26px] font-black italic leading-[1.05] tracking-[-0.02em] text-white">
-                  {subject.name}
-                </h3>
-                <p className="relative mt-2 text-[13px] font-medium leading-relaxed text-white/90">
-                  {subject.about}
-                </p>
-              </div>
-
-              <div className="flex flex-1 flex-col gap-3 p-3.5">
-                {/* Duration / mode / schedule */}
-                <div className="divide-y divide-[#e0eaf4] rounded-2xl border border-[#d6e3ef] bg-white shadow-sm">
-                  <Stat Icon={CalendarDays} label="Course Duration" value={subject.duration} />
-                  <Stat Icon={MonitorPlay} label="Learning Mode" value={learningMode} />
-                  <Stat Icon={Clock} label="Class Schedule" value={classSchedule} />
-                </div>
-
-                {/* What You'll Learn */}
-                <ListBlock Icon={Target} title="What You’ll Learn">
-                  {subject.learn.map((item) => (
-                    <li key={item} className="flex gap-2 text-[13px] font-semibold leading-snug text-[#0a1f5c]">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#1a5bd6]" strokeWidth={3} aria-hidden="true" />
-                      {item}
-                    </li>
-                  ))}
-                </ListBlock>
-
-                {/* Training Inclusions */}
-                <ListBlock Icon={Layers} title="Training Inclusions">
-                  {subject.inclusions.map((item, i) => {
-                    const Icon = inclusionIcons[i];
-                    return (
-                      <li key={item} className="flex gap-2 text-[13px] font-semibold leading-snug text-[#0a1f5c]">
-                        <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[#1a5bd6]" aria-hidden="true" />
-                        {item}
-                      </li>
-                    );
-                  })}
-                </ListBlock>
-
-                {/* Button: opens the Register popup (always at the bottom of the card) */}
-                <div className="mt-auto grid gap-2.5 pt-2">
-                  <a
-                    href={applyLink}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      window.dispatchEvent(new Event("open-scholarship-popup"));
-                    }}
-                    aria-label={`Apply For ${subject.name}`}
-                    className="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#0a3cb0] to-[#0e57d6] px-4 py-2 text-[15px] font-extrabold italic text-white shadow-[0_6px_14px_rgba(10,60,176,0.25)] transition active:scale-[0.98] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a3cb0]"
-                  >
-                    <Plane className="h-5 w-5 shrink-0" aria-hidden="true" />
-                    <span className="flex-1 text-center">Apply For This Subject</span>
-                    <ChevronRight className="h-5 w-5 shrink-0" aria-hidden="true" />
-                  </a>
-                </div>
-              </div>
-            </article>
-          );
-        })}
-      </div>
-
-      {/* Arrows + dots */}
-      <div className="mt-2 flex items-center justify-center gap-3">
-        <button
-          type="button"
-          onClick={() => goTo(activeIndex - 1)}
-          disabled={activeIndex === 0}
-          aria-label="Previous subject"
-          className="grid h-10 w-10 place-items-center rounded-full border border-[#c9dced] bg-white text-[#0a3cb0] shadow-sm transition hover:bg-[#edf4fa] disabled:opacity-40"
-        >
-          <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-        </button>
-
-        <div className="flex items-center gap-2">
-          {subjects.map((subject, index) => (
-            <button
-              key={subject.name}
-              type="button"
-              onClick={() => goTo(index)}
-              aria-label={`Show ${subject.name}`}
-              aria-current={index === activeIndex}
-              className={`h-2 rounded-full transition-all ${index === activeIndex ? "w-6 bg-[#0a3cb0]" : "w-2 bg-[#b8cde0]"
-                }`}
-            />
-          ))}
-        </div>
-
-        <button
-          type="button"
-          onClick={() => goTo(activeIndex + 1)}
-          disabled={activeIndex === lastIndex}
-          aria-label="Next subject"
-          className="grid h-10 w-10 place-items-center rounded-full border border-[#c9dced] bg-white text-[#0a3cb0] shadow-sm transition hover:bg-[#edf4fa] disabled:opacity-40"
-        >
-          <ChevronRight className="h-5 w-5" aria-hidden="true" />
-        </button>
-      </div>
-
-      <p className="mt-3 text-center text-xs font-bold text-[#15558b]">
-        {activeIndex + 1} / {subjects.length} · {subjects[activeIndex].name}
-      </p>
-      {activeIndex === 0 && (
-        <p className="mt-1 text-center text-[11px] font-semibold text-[#64788b] md:hidden">
-          Swipe Left To See More Subjects
+      {/* Banner under the roadmap */}
+      <div className="mx-auto mt-12 max-w-[1125px] rounded-3xl bg-[#0a2a5c] px-5 py-6 text-center shadow-[0_12px_28px_rgba(10,42,92,0.25)] sm:mt-14">
+        <p className="text-[15px] font-extrabold uppercase leading-snug tracking-wide text-[#ffdc3d] sm:text-[20px]">
+          Zero to Hero — we guide the journey, step by step.
         </p>
-      )}
+      </div>
     </Section>
   );
 }
 
-export default Subjects;
+export default Roadmap;

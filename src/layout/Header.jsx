@@ -7,9 +7,11 @@ import logo from "../assets/images/logo.jpg";
 // Menu links. Add, remove or rename links here.
 // "href" must match the id of a section (for example id="faq" -> "#faq").
 const navLinks = [
+  { label: "Home", href: "#home" },
   { label: "Scholarship", href: "#scholarship" },
+  { label: "Subjects", href: "#training" },
   { label: "Academy", href: "#academy" },
-  { label: "Roadmap", href: "#career-pathway" },
+  { label: "Roadmap", href: "#roadmap" },
   { label: "Videos & Podcast", href: "#media" },
   { label: "Testimonials", href: "#testimonial-shorts" },
   { label: "Reviews", href: "#google-review-highlights" },
