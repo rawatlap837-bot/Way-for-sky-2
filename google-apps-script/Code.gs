@@ -1,20 +1,46 @@
 // WayForSky registration form - Google Apps Script
-// Saves every form submission as a new row in your Google Sheet.
+// Saves every form submission as a new row in your Google Sheet,
+// then sends a WhatsApp template message through Chatverse.
+//
+// Setup:
+//   1. Project Settings > Script Properties > add CHATVERSE_API_KEY
+//   2. Deploy > New deployment > Web app (Execute as: Me, Access: Anyone)
+//   3. After ANY edit: Deploy > Manage deployments > pencil > Version: New version > Deploy
+
+/* ---------- Config ---------- */
 
 const SHEET_ID = "1dmtvmr21OIPImAihD5xNsyVi15eAmHygJXl8WbmKDmE";
 const SHEET_NAME = "Registrations";
 const TIMEZONE = "Asia/Kolkata";
-const SCRIPT_VERSION = "v4";
+const SCRIPT_VERSION = "v5";
+
 const CHATVERSE_TEMPLATE_URL =
   "https://api.chatverse.io/v1/whatsapp/templates/whatsapp_lp/send";
 const CHATVERSE_TEMPLATE_LANGUAGE = "en_US";
 
+// The sheet columns, in order. COLUMN_COUNT is derived from this list,
+// so the header row and the saved rows can never go out of sync again.
+const HEADERS = [
+  "Submitted At",
+  "Name",
+  "Mobile Number",
+  "Email Address",
+  "City",
+  "Current Education",
+  "Preferred Counselling Date & Time",
+  "WhatsApp Status",
+];
+const COLUMN_COUNT = HEADERS.length;
+const WHATSAPP_STATUS_COLUMN = HEADERS.indexOf("WhatsApp Status") + 1;
+
 /* ---------- Receives the form data from the website ---------- */
+
 function doPost(event) {
   const lock = LockService.getScriptLock();
 
   try {
     lock.waitLock(10000);
+
     const data = event && event.parameter ? event.parameter : {};
 
     const fullName = clean(data.fullName, 80);
@@ -27,11 +53,9 @@ function doPost(event) {
     if (!fullName || !email || !city || !education || !counsellingTime) {
       throw new Error("Missing required fields");
     }
-
     if (!/^\d{10}$/.test(mobile)) {
       throw new Error("Invalid mobile number");
     }
-
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       throw new Error("Invalid email address");
     }
@@ -39,35 +63,38 @@ function doPost(event) {
     const sheet = getOrCreateSheet();
     const row = sheet.getLastRow() + 1;
 
-    // Keep everything as plain text so Google Sheets does not change the values
-    sheet.getRange(row, 1, 1, 7).setNumberFormat("@");
-    sheet
-      .getRange(row, 1, 1, 7)
-      .setValues([
-        [
-          Utilities.formatDate(new Date(), TIMEZONE, "dd MMM yyyy, hh:mm a"),
-          fullName,
-          mobile,
-          email,
-          city,
-          education,
-          counsellingTime,
-        ],
-      ]);
+    const values = [
+      Utilities.formatDate(new Date(), TIMEZONE, "dd MMM yyyy, hh:mm a"),
+      fullName,
+      mobile,
+      email,
+      city,
+      education,
+      counsellingTime,
+      "WhatsApp Pending",
+    ];
 
-    // Send WhatsApp message after saving the registration.
-    let whatsapp = { sent: false, message: "Not attempted" };
-
-    try {
-      const messageResult = sendWhatsAppMessage(mobile);
-      whatsapp = { sent: true, message: "Sent", result: messageResult };
-    } catch (whatsappError) {
-      whatsapp = { sent: false, message: whatsappError.message };
-      Logger.log("WhatsApp message failed: " + whatsappError.message);
+    if (values.length !== COLUMN_COUNT) {
+      throw new Error(
+        "Row has " +
+          values.length +
+          " values but the sheet expects " +
+          COLUMN_COUNT,
+      );
     }
+
+    // Plain text format so Google Sheets never changes the values
+    // (for example turning 9876543210 into a number, or a date into a date).
+    const range = sheet.getRange(row, 1, 1, COLUMN_COUNT);
+    range.setNumberFormat("@");
+    range.setValues([values]);
+
+    // The registration is saved. A WhatsApp failure must not fail the form.
+    const whatsapp = trySendWhatsApp(sheet, row, mobile);
 
     return jsonResponse({ success: true, whatsapp: whatsapp });
   } catch (error) {
+    Logger.log("Registration failed: " + error.message);
     return jsonResponse({ success: false, message: error.message });
   } finally {
     if (lock.hasLock()) lock.releaseLock();
@@ -75,20 +102,21 @@ function doPost(event) {
 }
 
 /* ---------- Open the /exec link in the browser to check the live version ---------- */
+
 function doGet() {
   return jsonResponse({
     success: true,
     message: "WayForSky registration endpoint is active",
     version: SCRIPT_VERSION,
-    sheetId: SHEET_ID.slice(0, 6),
+    columns: COLUMN_COUNT,
   });
 }
 
 /* ---------- TEST: select "testSubmit" and click Run ----------
    Adds one fake row to the sheet so you can check everything works.
-   Delete the test row afterwards. */
+   Note: this also sends a real WhatsApp message to the fake number. */
 function testSubmit() {
-  const fakeEvent = {
+  const result = doPost({
     parameter: {
       fullName: "Test Student",
       mobile: "9876543210",
@@ -97,17 +125,14 @@ function testSubmit() {
       education: "12th Pass",
       counsellingTime: "25 Nov 2026, 10:30 am",
     },
-  };
-
-  const result = doPost(fakeEvent);
+  });
   Logger.log(result.getContent());
 }
 
-/* ---------- TEST: standalone WhatsApp message function ----------
-   Sends a test WhatsApp message to the configured number.
-   Check the Logs for success or error message. */
+/* ---------- TEST: select "testWhatsApp" and click Run ----------
+   Sends one test WhatsApp message. Put your own number below first. */
 function testWhatsApp() {
-  const testMobile = "9876543210"; // Replace once with your WhatsApp number
+  const testMobile = "9876543210"; // Replace with your WhatsApp number
   try {
     const result = sendWhatsAppMessage(testMobile);
     Logger.log("Test message accepted: " + JSON.stringify(result));
@@ -119,7 +144,7 @@ function testWhatsApp() {
 /* ---------- Helpers ---------- */
 
 // Trims the text, limits its length and removes a leading = + - @
-// (so the sheet never treats user text as a formula)
+// (so the sheet never treats user text as a formula).
 function clean(value, maxLength) {
   return String(value || "")
     .trim()
@@ -127,6 +152,7 @@ function clean(value, maxLength) {
     .slice(0, maxLength);
 }
 
+// Opens the sheet, creates it if missing, and makes sure the header row exists.
 function getOrCreateSheet() {
   const spreadsheet = SpreadsheetApp.openById(SHEET_ID);
 
@@ -134,15 +160,10 @@ function getOrCreateSheet() {
   if (!sheet) sheet = spreadsheet.insertSheet(SHEET_NAME);
 
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow([
-      "Submitted At",
-      "Name",
-      "Mobile Number",
-      "Email Address",
-      "City",
-      "Current Education",
-      "Preferred Counselling Date & Time",
-    ]);
+    sheet
+      .getRange(1, 1, 1, COLUMN_COUNT)
+      .setValues([HEADERS])
+      .setFontWeight("bold");
     sheet.setFrozenRows(1);
   }
 
@@ -157,6 +178,22 @@ function jsonResponse(payload) {
 
 /* ---------- WhatsApp Messaging ---------- */
 
+// Sends the message and writes the outcome into the WhatsApp Status column.
+// Never throws, so the caller can always report the registration as saved.
+function trySendWhatsApp(sheet, row, mobile) {
+  const statusCell = sheet.getRange(row, WHATSAPP_STATUS_COLUMN);
+
+  try {
+    const result = sendWhatsAppMessage(mobile);
+    statusCell.setValue("WhatsApp Sent");
+    return { sent: true, message: "Sent", result: result };
+  } catch (error) {
+    Logger.log("WhatsApp message failed: " + error.message);
+    statusCell.setValue("WhatsApp Failed: " + error.message.slice(0, 200));
+    return { sent: false, message: error.message };
+  }
+}
+
 function sendWhatsAppMessage(mobile) {
   const apiKey =
     PropertiesService.getScriptProperties().getProperty("CHATVERSE_API_KEY");
@@ -164,38 +201,31 @@ function sendWhatsAppMessage(mobile) {
     throw new Error("CHATVERSE_API_KEY is missing from Script Properties");
   }
 
-  const recipient = mobile.startsWith("91") ? mobile : "91" + mobile;
-  const payload = {
-    to: recipient,
-    language: CHATVERSE_TEMPLATE_LANGUAGE,
-  };
+  const digits = String(mobile).replace(/\D/g, "");
+  const recipient = digits.length === 10 ? "91" + digits : digits;
 
-  const options = {
+  const response = UrlFetchApp.fetch(CHATVERSE_TEMPLATE_URL, {
     method: "post",
     muteHttpExceptions: true,
     contentType: "application/json",
-    headers: {
-      Authorization: "Bearer " + apiKey,
-    },
-    payload: JSON.stringify(payload),
-  };
+    headers: { Authorization: "Bearer " + apiKey },
+    payload: JSON.stringify({
+      to: recipient,
+      language: CHATVERSE_TEMPLATE_LANGUAGE,
+    }),
+  });
 
-  const response = UrlFetchApp.fetch(CHATVERSE_TEMPLATE_URL, options);
   const status = response.getResponseCode();
   const body = response.getContentText();
-
   Logger.log("Chatverse HTTP " + status + ": " + body);
-
-  let result;
-  try {
-    result = JSON.parse(body);
-  } catch (error) {
-    throw new Error("Chatverse returned invalid JSON (HTTP " + status + ")");
-  }
 
   if (status < 200 || status >= 300) {
     throw new Error("Chatverse HTTP " + status + ": " + body);
   }
 
-  return result;
+  try {
+    return JSON.parse(body);
+  } catch (error) {
+    throw new Error("Chatverse returned invalid JSON (HTTP " + status + ")");
+  }
 }
