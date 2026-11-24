@@ -73,7 +73,7 @@ const actions = [
   },
   {
     label: "Request Call",
-    href: "#register",
+    href: links.phone,
     icon: PhoneIcon,
     chip: "bg-[#155b9b] text-white",
     pill: "md:bg-[#155b9b]",

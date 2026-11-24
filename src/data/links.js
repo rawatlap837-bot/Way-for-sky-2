@@ -5,6 +5,7 @@
 // https://wa.me/91XXXXXXXXXX?text=Hello%20WayForSky
 
 export const links = {
+  phone: "tel:+919739525223",
   whatsapp: "https://wa.me/919739525223?text=Hello%20WayForSky%2C%20I%20need%20help.",
   whatsappScholarship:
     "https://wa.me/919739525223?text=Hello%20WayForSky%2C%20I%20would%20like%20scholarship%20information.",

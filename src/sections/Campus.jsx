@@ -62,7 +62,7 @@ function Campus() {
           />
         ))}
 
-        <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col gap-1 bg-gradient-to-t from-navy/95 via-navy/55 to-transparent px-6 pb-16 pt-20 text-white sm:px-8 sm:pb-20">
+        <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col gap-1 bg-gradient-to-t from-navy/80 via-navy/25 to-transparent px-6 pb-5 pt-14 text-white sm:px-8 sm:pb-7">
           <strong className="text-lg sm:text-xl">WayForSky Aviation Academy</strong>
           <span className="text-xs text-[#d7e4ef]">
             Classroom environment · Digital learning · DGCA subject preparation

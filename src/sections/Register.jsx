@@ -33,7 +33,12 @@ const fields = [
   { name: "mobile", label: "Mobile number", type: "tel", placeholder: "10-digit mobile number", inputMode: "numeric", pattern: "[0-9]{10}", autoComplete: "tel" },
   { name: "email", label: "Email address", type: "email", placeholder: "Enter your email address", maxLength: 100, autoComplete: "email" },
   { name: "city", label: "City", type: "text", placeholder: "Your city", maxLength: 60, autoComplete: "address-level2" },
-  { name: "education", label: "Current Education", type: "text", placeholder: "Your current education", maxLength: 80 },
+  {
+    name: "education",
+    label: "Current Education",
+    type: "select",
+    options: ["12th pass", "Currently in 12th", "Graduate", "Other"],
+  },
   { name: "counsellingTime", label: "Preferred Counselling Date & Time", type: "datetime-local" },
 ];
 
@@ -283,22 +288,42 @@ function Register() {
                         <label htmlFor={id} className="mb-1.5 block text-xs font-bold text-[#34495d]">
                           {field.label} *
                         </label>
-                        <input
-                          id={id}
-                          name={field.name}
-                          type={field.type}
-                          value={formData[field.name]}
-                          onChange={handleChange}
-                          placeholder={field.placeholder}
-                          maxLength={field.maxLength}
-                          inputMode={field.inputMode}
-                          pattern={field.pattern}
-                          autoComplete={field.autoComplete}
-                          autoFocus={field.autoFocus}
-                          min={isLast ? minimumCounsellingTime : undefined}
-                          required
-                          className={inputClass}
-                        />
+                        {field.type === "select" ? (
+                          <select
+                            id={id}
+                            name={field.name}
+                            value={formData[field.name]}
+                            onChange={handleChange}
+                            required
+                            className={inputClass}
+                          >
+                            <option value="" disabled>
+                              Select your option
+                            </option>
+                            {field.options.map((option) => (
+                              <option key={option} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <input
+                            id={id}
+                            name={field.name}
+                            type={field.type}
+                            value={formData[field.name]}
+                            onChange={handleChange}
+                            placeholder={field.placeholder}
+                            maxLength={field.maxLength}
+                            inputMode={field.inputMode}
+                            pattern={field.pattern}
+                            autoComplete={field.autoComplete}
+                            autoFocus={field.autoFocus}
+                            min={isLast ? minimumCounsellingTime : undefined}
+                            required
+                            className={inputClass}
+                          />
+                        )}
                       </div>
                     );
                   })}

@@ -12,7 +12,7 @@
 const SHEET_ID = "1dmtvmr21OIPImAihD5xNsyVi15eAmHygJXl8WbmKDmE";
 const SHEET_NAME = "Registrations";
 const TIMEZONE = "Asia/Kolkata";
-const SCRIPT_VERSION = "v5";
+const SCRIPT_VERSION = "v6";
 
 const CHATVERSE_TEMPLATE_URL =
   "https://api.chatverse.io/v1/whatsapp/templates/whatsapp_lp/send";
@@ -33,6 +33,13 @@ const HEADERS = [
 const COLUMN_COUNT = HEADERS.length;
 const WHATSAPP_STATUS_COLUMN = HEADERS.indexOf("WhatsApp Status") + 1;
 
+const EDUCATION_OPTIONS = [
+  "12th pass",
+  "Currently in 12th",
+  "Graduate",
+  "Other",
+];
+
 /* ---------- Receives the form data from the website ---------- */
 
 function doPost(event) {
@@ -52,6 +59,9 @@ function doPost(event) {
 
     if (!fullName || !email || !city || !education || !counsellingTime) {
       throw new Error("Missing required fields");
+    }
+    if (EDUCATION_OPTIONS.indexOf(education) === -1) {
+      throw new Error("Invalid current education option");
     }
     if (!/^\d{10}$/.test(mobile)) {
       throw new Error("Invalid mobile number");
@@ -122,7 +132,7 @@ function testSubmit() {
       mobile: "9876543210",
       email: "test@example.com",
       city: "Delhi",
-      education: "12th Pass",
+      education: "12th pass",
       counsellingTime: "25 Nov 2026, 10:30 am",
     },
   });
