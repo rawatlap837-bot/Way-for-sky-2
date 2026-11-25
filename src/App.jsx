@@ -7,6 +7,7 @@ import Hero from "./sections/Hero.jsx";
 import TrustStrip from "./sections/TrustStrip.jsx";
 import SkymoHelpDesk from "./sections/SkymoHelpDesk.jsx";
 import Scholarship from "./sections/Scholarship.jsx";
+import PilotCarousel from "./sections/PilotCarousel.jsx";
 import Subjects from "./sections/Subjects.jsx";
 import Academy from "./sections/Academy.jsx";
 import Campus from "./sections/Campus.jsx";
@@ -34,6 +35,7 @@ function App() {
         <TrustStrip />
         <SkymoHelpDesk />
         <Scholarship />
+        <PilotCarousel />
         <Subjects />
         <Academy />
         <Campus />
