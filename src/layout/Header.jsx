@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import Container from "../components/Container.jsx";
 import Button from "../components/Button.jsx";
@@ -23,8 +23,26 @@ function Header() {
   // Controls the mobile menu (opens when the menu icon is tapped).
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Automatically close mobile menu when user scrolls the page
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const initialY = window.scrollY;
+
+    const handleScroll = () => {
+      if (Math.abs(window.scrollY - initialY) > 10) {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [menuOpen]);
+
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-line bg-white/95 backdrop-blur">
       <Container className="flex h-16 items-center justify-between gap-3 sm:h-[72px]">
         {/* Logo */}
         <a href="#home" aria-label="WayForSky home" className="shrink-0">
@@ -38,10 +56,10 @@ function Header() {
         {/* Desktop menu */}
         <nav
           aria-label="Main navigation"
-          className="hidden items-center gap-6 text-sm font-semibold text-[#415368] xl:flex"
+          className="hidden items-center gap-3.5 text-sm font-semibold text-[#415368] xl:flex xl:gap-4 2xl:gap-6"
         >
           {navLinks.map((link) => (
-            <a key={link.href} href={link.href} className="transition hover:text-brand">
+            <a key={link.href} href={link.href} className="whitespace-nowrap transition hover:text-brand">
               {link.label}
             </a>
           ))}
@@ -78,7 +96,7 @@ function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="border-b border-line py-3 text-sm font-semibold text-[#415368] hover:text-brand"
+                className="whitespace-nowrap border-b border-line py-3 text-sm font-semibold text-[#415368] hover:text-brand"
               >
                 {link.label}
               </a>

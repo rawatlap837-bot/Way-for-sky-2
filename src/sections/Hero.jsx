@@ -6,7 +6,7 @@ function Hero() {
   return (
     <section
       id="home"
-      className="relative scroll-mt-20 overflow-hidden bg-white md:min-h-[620px] md:bg-[#f5f9fd]"
+      className="relative isolate scroll-mt-20 overflow-hidden bg-white md:min-h-[620px] md:bg-[#f5f9fd]"
     >
       {/* Soft background only for desktop */}
       <div className="absolute inset-0 hidden bg-[radial-gradient(circle_at_82%_42%,rgba(46,120,183,0.12),transparent_24%),linear-gradient(135deg,#f8fbfe_0%,#eef5fb_100%)] md:block" />
@@ -58,7 +58,7 @@ function Hero() {
         </p>
 
         {/* Buttons */}
-        <div className="absolute left-[18px] right-[18px] top-[362px] z-30 grid gap-[5px]">
+        <div className="absolute left-[18px] right-[18px] top-[362px] z-10 grid gap-[5px]">
           <a
             href="#register"
             onClick={(event) => {
@@ -83,14 +83,14 @@ function Hero() {
         </div>
 
         {/* Fine print */}
-        <p className="absolute left-[18px] right-[18px] top-[446px] z-30 text-center text-[9.5px] font-medium leading-[1.5] text-[#3b4a5e]">
+        <p className="absolute left-[18px] right-[18px] top-[446px] z-10 text-center text-[9.5px] font-medium leading-[1.5] text-[#3b4a5e]">
           ₹7,999 Programme Registration Fee <span className="mx-0.5">·</span>
           Scholarship Selection Is Merit-Based <span className="mx-0.5">·</span>
           Registration Does Not Guarantee Selection
         </p>
 
         {/* 100 Scholarship card */}
-        <div className="absolute left-[18px] right-[18px] top-[486px] z-30 flex h-[62px] items-center rounded-2xl border-2 border-[#f5d23a] bg-white px-3">
+        <div className="absolute left-[18px] right-[18px] top-[486px] z-10 flex h-[62px] items-center rounded-2xl border-2 border-[#f5d23a] bg-white px-3">
           <svg
             viewBox="0 0 48 48"
             className="h-[40px] w-[40px] shrink-0 text-[#0a1f5c]"
