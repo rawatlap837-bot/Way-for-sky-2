@@ -382,6 +382,23 @@ function Subjects() {
           Swipe Left To See More Subjects
         </p>
       )}
+
+      {/* Select All Subjects button — below navigation */}
+      <div className="mx-auto mt-5 max-w-[380px] px-4 sm:px-5 md:px-0">
+        <a
+          href={applyLink}
+          onClick={(event) => {
+            event.preventDefault();
+            window.dispatchEvent(new Event("open-scholarship-popup"));
+          }}
+          aria-label="Select All Subjects"
+          className="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-[#0a3cb0] bg-white px-4 py-2 text-[15px] font-extrabold italic text-[#0a3cb0] shadow-sm transition active:scale-[0.98] hover:bg-[#edf4fa] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a3cb0]"
+        >
+          <BookOpen className="h-5 w-5 shrink-0" aria-hidden="true" />
+          <span className="flex-1 text-center">Select All Subjects</span>
+          <ChevronRight className="h-5 w-5 shrink-0" aria-hidden="true" />
+        </a>
+      </div>
     </Section>
   );
 }

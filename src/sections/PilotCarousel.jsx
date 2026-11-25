@@ -1,9 +1,11 @@
 import { useRef, useEffect, useState } from "react";
 
-// All 15 pilot scholarship winner images
-const pilotImages = Array.from({ length: 15 }, (_, i) => ({
-  src: `/Pilots/pilot-${i + 1}.jpeg`,
-  alt: `WayForSky Scholarship Pilot ${i + 1}`,
+// All 14 pilot scholarship winner images
+const pilotNumbers = [1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+
+const pilotImages = pilotNumbers.map((num, idx) => ({
+  src: `/Pilots/pilot-${num}.jpeg`,
+  alt: `WayForSky Scholarship Pilot ${idx + 1}`,
 }));
 
 function PilotCarousel() {

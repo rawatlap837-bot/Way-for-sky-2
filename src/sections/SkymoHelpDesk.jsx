@@ -1,6 +1,6 @@
 import Section from "../components/Section.jsx";
 import Button from "../components/Button.jsx";
-import skymo from "../assets/images/skymo.jpg";
+import skymo from "../../public/cartoon-removebg-preview.png";
 import { links } from "../data/links.js";
 
 // The small pills under the paragraph.
