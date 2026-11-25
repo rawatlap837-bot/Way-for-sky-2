@@ -1,6 +1,5 @@
 import Container from "../components/Container.jsx";
 import { links } from "../data/links.js";
-import logo from "../assets/images/logo.jpg";
 
 // Footer links. Add, remove or rename links here.
 const footerLinks = [
@@ -20,9 +19,9 @@ function Footer() {
         <div>
           <a href="#home" aria-label="WayForSky home" className="block w-fit">
             <img
-              src={logo}
+              src="/logo2.png"
               alt="WayForSky – Global Aviation Pathway"
-              className="h-12 w-auto rounded-lg bg-white px-2 py-1"
+              className="h-10 w-auto"
             />
           </a>
           <p className="mt-3 max-w-xs text-xs text-[#879aaa]">
