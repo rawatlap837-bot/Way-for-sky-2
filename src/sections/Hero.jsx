@@ -16,7 +16,7 @@ function Hero() {
         {/* Mascot on the road: right-anchored, sits behind the text.
             The left edge fades into the white page so there is no hard cut. */}
         <img
-          src="/cartoon-removebg-preview.png"
+          src="/background.png"
           alt="Skymo, the WayForSky aviation mascot"
           className="pointer-events-none absolute right-[-17px] top-[96px] z-0 h-[270px] w-[275px] max-w-none object-contain object-bottom"
           style={{
@@ -165,7 +165,7 @@ function Hero() {
 
         <div className="relative min-h-[520px]">
           <img
-            src="/cartoon-removebg-preview.png"
+            src="/background.png"
             alt="Skymo, the WayForSky aviation mascot"
             className="absolute bottom-[-40px] right-[-18px] h-[590px] w-[590px] object-contain"
           />
