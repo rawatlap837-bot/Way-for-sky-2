@@ -12,4 +12,5 @@ export const links = {
   instagram: "https://www.instagram.com/wayforskyofficial/",
   youtube: "https://youtube.com/@wayforskyacademy",
   googleReviews: "https://www.google.com/search?q=WayForSky+reviews",
+  razorpay: "https://pages.razorpay.com/pl_U4jXkBkZs0tkcj/view",
 };
