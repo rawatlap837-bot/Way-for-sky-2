@@ -14,6 +14,10 @@ const GOOGLE_SHEET_WEB_APP_URL =
 
 const REQUEST_TIMEOUT_MS = 20000;
 
+const WHATSAPP_REDIRECT_URL = `https://wa.me/917019903800?text=${encodeURIComponent(
+  "I want to know more about this scholarship."
+)}`;
+
 const emptyForm = {
   fullName: "",
   mobile: "",
@@ -86,8 +90,16 @@ function validate(form) {
   return "";
 }
 
+// Generates a unique event ID for Meta Pixel + CAPI deduplication.
+function createEventId() {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return `lead_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+}
+
 // Sends the form to the Apps Script and resolves only on a confirmed success.
-async function submitRegistration(form) {
+async function submitRegistration(form, eventId) {
   const payload = new URLSearchParams({
     fullName: form.fullName.trim(),
     mobile: form.mobile,
@@ -95,6 +107,7 @@ async function submitRegistration(form) {
     city: form.city.trim(),
     education: form.education.trim(),
     counsellingTime: formatCounsellingTime(form.counsellingTime),
+    eventId,
   });
 
   const controller = new AbortController();
@@ -191,9 +204,19 @@ function Register() {
     setIsSubmitting(true);
 
     try {
-      await submitRegistration(formData);
+      const eventId = createEventId();
+      await submitRegistration(formData, eventId);
+      if (typeof window.fbq === "function") {
+        window.fbq(
+          "track",
+          "Lead",
+          { content_name: "WayForSky Scholarship Registration" },
+          { eventID: eventId }
+        );
+      }
       setIsSubmitted(true);
       setFormData(emptyForm);
+      window.location.href = WHATSAPP_REDIRECT_URL;
     } catch (error) {
       console.error("Registration failed:", error);
       setErrorMessage(
@@ -259,8 +282,14 @@ function Register() {
                   Application Submitted
                 </h3>
                 <p className="mb-6 mt-2 text-sm text-muted">
-                  Thank you. WayForSky will contact you soon.
+                  Thank you. Redirecting you to WhatsApp...
                 </p>
+                <a
+                  href={WHATSAPP_REDIRECT_URL}
+                  className="mb-3 block w-full rounded-lg bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#1ebe5d]"
+                >
+                  Open WhatsApp
+                </a>
                 <button
                   type="button"
                   onClick={closePopup}

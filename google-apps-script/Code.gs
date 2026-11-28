@@ -4,15 +4,19 @@
 //
 // Setup:
 //   1. Project Settings > Script Properties > add CHATVERSE_API_KEY
-//   2. Deploy > New deployment > Web app (Execute as: Me, Access: Anyone)
-//   3. After ANY edit: Deploy > Manage deployments > pencil > Version: New version > Deploy
+//   2. Project Settings > Script Properties > add META_ACCESS_TOKEN
+//   3. Deploy > New deployment > Web app (Execute as: Me, Access: Anyone)
+//   4. After ANY edit: Deploy > Manage deployments > pencil > Version: New version > Deploy
 
 /* ---------- Config ---------- */
 
 const SHEET_ID = "1dmtvmr21OIPImAihD5xNsyVi15eAmHygJXl8WbmKDmE";
 const SHEET_NAME = "Registrations";
 const TIMEZONE = "Asia/Kolkata";
-const SCRIPT_VERSION = "v6";
+const SCRIPT_VERSION = "v7";
+
+const META_PIXEL_ID = "2129040214417001";
+const META_GRAPH_VERSION = "v21.0";
 
 const CHATVERSE_TEMPLATE_URL =
   "https://api.chatverse.io/v1/whatsapp/templates/whatsapp_lp/send";
@@ -99,10 +103,16 @@ function doPost(event) {
     range.setNumberFormat("@");
     range.setValues([values]);
 
-    // The registration is saved. A WhatsApp failure must not fail the form.
+    // The registration is saved. WhatsApp / Meta CAPI failures must not fail the form.
     const whatsapp = trySendWhatsApp(sheet, row, mobile);
+    const metaCapi = trySendMetaCapiLead(
+      email,
+      mobile,
+      city,
+      clean(data.eventId, 80),
+    );
 
-    return jsonResponse({ success: true, whatsapp: whatsapp });
+    return jsonResponse({ success: true, whatsapp: whatsapp, metaCapi: metaCapi });
   } catch (error) {
     Logger.log("Registration failed: " + error.message);
     return jsonResponse({ success: false, message: error.message });
@@ -149,6 +159,18 @@ function testWhatsApp() {
   } catch (error) {
     Logger.log("Test message failed: " + error.message);
   }
+}
+
+/* ---------- TEST: select "testMetaCapi" and click Run ----------
+   Sends one test Lead event to Meta Conversions API. */
+function testMetaCapi() {
+  const result = trySendMetaCapiLead(
+    "test@example.com",
+    "9876543210",
+    "Delhi",
+    "test_" + Date.now(),
+  );
+  Logger.log("Meta CAPI test result: " + JSON.stringify(result));
 }
 
 /* ---------- Helpers ---------- */
@@ -237,5 +259,82 @@ function sendWhatsAppMessage(mobile) {
     return JSON.parse(body);
   } catch (error) {
     throw new Error("Chatverse returned invalid JSON (HTTP " + status + ")");
+  }
+}
+
+/* ---------- Meta Conversions API ---------- */
+
+function sha256Hex(value) {
+  const bytes = Utilities.computeDigest(
+    Utilities.DigestAlgorithm.SHA_256,
+    String(value || "").trim().toLowerCase(),
+    Utilities.Charset.UTF_8,
+  );
+  return bytes
+    .map(function (b) {
+      const v = (b < 0 ? b + 256 : b).toString(16);
+      return v.length === 1 ? "0" + v : v;
+    })
+    .join("");
+}
+
+function trySendMetaCapiLead(email, mobile, city, eventId) {
+  const accessToken =
+    PropertiesService.getScriptProperties().getProperty("META_ACCESS_TOKEN");
+  if (!accessToken) {
+    return { sent: false, message: "META_ACCESS_TOKEN not configured" };
+  }
+
+  try {
+    const digits = String(mobile || "").replace(/\D/g, "");
+    const phone = digits.length === 10 ? "91" + digits : digits;
+
+    const eventPayload = {
+      event_name: "Lead",
+      event_time: Math.floor(Date.now() / 1000),
+      action_source: "website",
+      user_data: {
+        em: [sha256Hex(email)],
+        ph: [sha256Hex(phone)],
+        ct: [sha256Hex(city)],
+      },
+      custom_data: {
+        content_name: "WayForSky Scholarship Registration",
+        currency: "INR",
+        value: 7999,
+      },
+    };
+
+    if (eventId) {
+      eventPayload.event_id = eventId;
+    }
+
+    const url =
+      "https://graph.facebook.com/" +
+      META_GRAPH_VERSION +
+      "/" +
+      META_PIXEL_ID +
+      "/events?access_token=" +
+      encodeURIComponent(accessToken);
+
+    const response = UrlFetchApp.fetch(url, {
+      method: "post",
+      muteHttpExceptions: true,
+      contentType: "application/json",
+      payload: JSON.stringify({ data: [eventPayload] }),
+    });
+
+    const status = response.getResponseCode();
+    const body = response.getContentText();
+    Logger.log("Meta CAPI HTTP " + status + ": " + body);
+
+    if (status < 200 || status >= 300) {
+      return { sent: false, message: "Meta CAPI HTTP " + status };
+    }
+
+    return { sent: true };
+  } catch (error) {
+    Logger.log("Meta CAPI failed: " + error.message);
+    return { sent: false, message: error.message };
   }
 }

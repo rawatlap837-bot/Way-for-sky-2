@@ -1,6 +1,5 @@
 import Section from "../components/Section.jsx";
 import Button from "../components/Button.jsx";
-import skymo from "../../public/cartoon-removebg-preview.png";
 import { links } from "../data/links.js";
 
 // The small pills under the paragraph.
@@ -26,7 +25,7 @@ function SkymoHelpDesk() {
 
           <div className="mt-7 overflow-hidden rounded-[22px] bg-[radial-gradient(circle_at_center,#ffffff_0%,#e8f4fb_70%,#dcebf5_100%)]">
             <img
-              src={skymo}
+              src="/cartoon-removebg-preview.png"
               alt="Skymo, WayForSky help desk"
               className="mx-auto h-[220px] w-full object-contain mix-blend-multiply drop-shadow-md md:h-[250px]"
             />
